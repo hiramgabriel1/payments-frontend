@@ -1,0 +1,14 @@
+{
+  "cliente": [
+    {
+      "id": "a9d9",
+      "nombre": "sebastian",
+      "capitalPrestado": 1,
+      "total": "1.150",
+      "fechaPrestamo": "2222-02-22",
+      "fechaPago": "1111-11-11",
+      "apellido": "ramirez",
+      "banco": "BVBBA"
+    }
+  ]
+}
