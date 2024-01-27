@@ -2,7 +2,19 @@
     //importacion del modal y del corredor de usuarios
     import ModalNewUser from '../components/ModalNewUser.svelte';
     import RecorridoUsers from '../components/RecorridoUsers.svelte';
-    
+
+    let dataClients
+    async function getClients(){
+    try {
+        const clients = await fetch('../../src/db.json')
+        let data = await clients.json()
+        dataClients = data
+        console.log(dataClients);
+    } catch (error) {
+        console.log(error);
+    }
+ }
+  getClients()
     //total clientes
     let data = []
     async function totalclientes(){
@@ -113,6 +125,23 @@
                         <tbody id="tbodyPrincipal" class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                             <!--Recorrido de los usuarios usando un each en la pagina RecorridoUser.svelte-->
                             <RecorridoUsers />
+                          
+                            <main class=main>
+                                {#if dataClients}
+                                  {#each dataClients.cliente as client}
+                                    <div class=div>
+                                      <p class=id>{client.id}</p>
+                                      <h1 class=name>{client.nombre}</h1>
+                                      <p class=apellido>{client.apellido}</p>
+                                      <p class=total>{client.total}</p>
+                                      <!-- Agrega más campos según la estructura de tu objeto JSON -->
+                                    </div>
+                                  {/each}
+                                {:else}
+                                  <p>Cargando...</p>
+                                {/if}
+                              </main>
+                          
                         </tbody>
                     </table>
                 </div>
@@ -148,3 +177,11 @@
         </div>
     </div>
 </section>
+
+<style>
+    .div{
+        display: flex;     
+        justify-content: space-between;
+    }
+  
+</style>
