@@ -1,7 +1,7 @@
 <script>
     //importacion del modal y del corredor de usuarios
-    import ModalNewUser from '../components/ModalNewUser.svelte';
-    import RecorridoUsers from '../components/RecorridoUsers.svelte';
+    import ModalNewUser from '../../components/ModalNewUser.svelte';
+    import RecorridoUsers from '../../components/RecorridoUsers.svelte';
 
     let dataClients
     console.log(dataClients)
@@ -46,7 +46,6 @@
     }
    }
 
-
    let searchTerm = '';
     let searchResults = [];
 
@@ -68,7 +67,6 @@
 
 </script>
 
-<!-- modal -->
 <section class="container px-4 mx-auto">
     <div class="sm:flex sm:items-center sm:justify-between">
         <div>
@@ -87,7 +85,6 @@
         <div class="flex items-center mt-4 gap-x-3">
             <!--Modal creacion de nuevos usuarios-->
             <ModalNewUser />
-
         </div>
     </div>
 
@@ -98,9 +95,10 @@
                 Clientes
             </button>
 
-            <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100" on:click={() => filterAllClients('pendiente')}>
+            <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100" 
+            on:click={() => filterAllClients('pendiente')}>
                 Pagos pendientes
-            </button>
+            </a>
 
             <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100" on:click={() => filterAllClients('cancelado')}>
                 Clientes cancelados
@@ -122,7 +120,6 @@
             <input on:input={handleInput} type="text" placeholder="Search" class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
         </div>
     </div>
-
 
     <!--tabla clientes-->
     <div class="flex flex-col mt-6">
@@ -154,49 +151,14 @@
                                 <!--Monto dinero prestado-->
                                 <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Monto prestamo</th>
                                 <!--Barra porcentae de pago-->
-                                <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Barra porcentaje pago</th>            
+                                <!-- <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">Barra porcentaje pago</th>             -->
                                 <th scope="col" class="relative py-3.5 px-4">
                                     <span class="sr-only">Edit</span>
                                 </th>
                             </tr>
                         </thead>
                         <tbody id="tbodyPrincipal" class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-                            <!--Recorrido de los usuarios usando un each en la pagina RecorridoUser.svelte-->
                             <RecorridoUsers />
-                          
-                            <main class=main>
-                                {#if searchResults.length > 0}
-                                    {#each searchResults as client}
-                                        <div class=div>
-                                            <h1 class=name>{client.username}</h1>
-                                            <p class=apellido>{client.lastName}</p>
-                                            <p class=total>{client.total}</p>
-                                            <!-- Agrega más campos según la estructura de tu objeto JSON -->
-                                        </div>
-                                    {/each}
-                                {:else if clientesfiltrados}
-                                    {#each clientesfiltrados as client}
-                                        <div class=div>
-                                            <h1 class=name>{client.username}</h1>
-                                            <p class=apellido>{client.lastName}</p>
-                                            <p class=total>{client.total}</p>
-                                            <!-- Agrega más campos según la estructura de tu objeto JSON -->
-                                        </div>
-                                    {/each}
-                                {:else if dataClients}
-                                    {#each dataClients.data as client}
-                                        <div class=div>
-                                            <h1 class=name>{client.username}</h1>
-                                            <p class=apellido>{client.lastName}</p>
-                                            <p class=total>{client.total}</p>
-                                            <!-- Agrega más campos según la estructura de tu objeto JSON -->
-                                        </div>
-                                    {/each}
-                                {:else}
-                                    <p>Cargando...</p>
-                                {/if}
-                            </main>
-                            
                         </tbody>
                     </table>
                 </div>
@@ -216,13 +178,13 @@
                 </svg>
 
                 <span>
-                    previous
+                    Ant
                 </span>
             </a>
 
             <a href="$" class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                 <span>
-                    Next
+                    Sig
                 </span>
 
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
