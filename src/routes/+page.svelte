@@ -7,7 +7,7 @@
     let data = []
     async function totalclientes(){
         try {
-            let url = await fetch('http://localhost:3000/cliente')
+            let url = await fetch('https://payments-api-jpt5.onrender.com/api/v1/')
             let response = await url.json()
             data = response
             
