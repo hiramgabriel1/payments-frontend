@@ -65,6 +65,14 @@
         console.log('Resultados de la búsqueda:', searchResults);
     };
 
+
+    const nextPage = () => {
+        // 
+    }
+ 
+    const previousPage = () => {
+        
+    }
 </script>
 
 <section class="container px-4 mx-auto">
@@ -73,7 +81,6 @@
             <div class="flex items-center gap-x-3">
                 
                 <h2 class="text-lg font-medium text-gray-800 dark:text-white">Total clientes:</h2>
-                <!--Numeros de clientes-->
                 {#if data != ""}
                     <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{data.length} clientes</span>
                 {:else}
@@ -172,25 +179,29 @@
         </div>
 
         <div class="flex items-center mt-4 gap-x-4 sm:mt-0">
-            <a href="$" class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
+            <button 
+                on:click={previousPage}
+                class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
                 </svg>
 
                 <span>
-                    Ant
+                    Anterior
                 </span>
-            </a>
+            </button>
 
-            <a href="$" class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
+            <button
+                on:click={nextPage}
+                class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
                 <span>
-                    Sig
+                    Siguiente
                 </span>
 
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
                 </svg>
-            </a>
+            </button>
         </div>
     </div>
 </section>
