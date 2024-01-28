@@ -2,12 +2,52 @@
   "cliente": [
     {
       "id": "a9d9",
-      "nombre": "sebastian",
+      "nombre": "Sebastian",
       "capitalPrestado": 1,
       "total": "1.150",
       "fechaPrestamo": "2222-02-22",
       "fechaPago": "1111-11-11",
       "apellido": "ramirez",
+      "banco": "BVBBA"
+    },
+    {
+      "id": "a8d8",
+      "nombre": "Alex",
+      "capitalPrestado": 1,
+      "total": "1.350",
+      "fechaPrestamo": "2223-03-22",
+      "fechaPago": "1111-12-12",
+      "apellido": "bris",
+      "banco": "BVBBA"
+    },
+    {
+      "id": "a7d7",
+      "nombre": "Lucas",
+      "capitalPrestado": 2,
+      "total": "1.050",
+      "fechaPrestamo": "2222-03-23",
+      "fechaPago": "1111-13-13",
+      "apellido": "visa",
+      "banco": "BVBBA"
+    },
+    {
+      "id": "a6d6",
+      "nombre": "Jose",
+      "capitalPrestado": 3,
+      "total": "1.550",
+      "fechaPrestamo": "2222-04-24",
+      "fechaPago": "1111-14-14",
+      "apellido": "perez",
+      "banco": "BVBBA"
+    },
+    {
+      "id": "a5d5",
+      "nombre": "Damian",
+      "capitalPrestado": 1,
+      "total": "1.250",
+      "fechaPrestamo": "2222-05-25",
+      "fechaPago": "1111-15-15",
+      "apellido": "rodrigues",
       "banco": "BVBBA"
     }
   ]
