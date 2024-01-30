@@ -13,6 +13,7 @@
         const clients = await fetch('https://payments-api-jpt5.onrender.com/api/v1/')
         let data = await clients.json()
         dataClients = data
+        console.log(dataClients);
     } catch (error) {
         console.log(error);
     }
@@ -20,7 +21,7 @@
   getClients()
     //total clientes
     let data = []
-    async function totalclientes(){
+    /*async function totalclientes(){
         try {
             let url = await fetch('https://payments-api-jpt5.onrender.com/api/v1/')
             let response = await url.json()
@@ -30,7 +31,7 @@
             console.error("error")
         }
     }
-    totalclientes()
+    totalclientes() */
 
 
 let searchTerm = '';
@@ -38,15 +39,15 @@ let searchResults = [];
 
 const handleInput = (event) => {
         searchTerm = event.target.value.toLowerCase();
-        console.log('Término de búsqueda:', searchTerm);
-    };
+        if(searchTerm === ''){
+            searchResults = []
+        }
+};
 
     const handleSearch = () => {
         searchResults = dataClients.data.filter(client => {
             return client.username.toLowerCase().includes(searchTerm);
         });
-        
-        console.log('Resultados de la búsqueda:', searchResults);
     };
 
 </script>
@@ -59,7 +60,7 @@ const handleInput = (event) => {
                 
                 <h2 class="text-lg font-medium text-gray-800 dark:text-white">Total clientes:</h2>
                 <!--Numeros de clientes-->
-                {#if data != ""}
+                {#if dataClients}
                 <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">{dataClients.data.length} clientes</span>
                 {:else}
                 <span class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">0 clientes</span>
@@ -110,7 +111,7 @@ const handleInput = (event) => {
                 </svg>
             </button>
 
-            <input on:input={handleInput} type="text" placeholder="Search" class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
+            <input on:input={handleInput} type="text" placeholder="Search..." class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40">
         </div>
     </div>
 
@@ -158,9 +159,10 @@ const handleInput = (event) => {
                                         <td class="px-4 py-2">{client._id}</td>
                                         <td class="px-12 py-2">{client.username}</td>
                                         <td class="px-4 py-2">{client.lastName}</td>
-                                        <td class="px-4 py-2">{client.total}</td>
-                                      
-                                        <td class="px-4 py-2"><!-- Barra de porcentaje de pago --></td>
+                                        <td class="px-4 py-2">{client.total}</td>                                                                       
+                                        <td class="px-4 py-2">
+                                            <progress max="100" value={(client.capitalPrestado / client.total) * 10}></progress>                        
+                                        </td>
                                         <td class="px-4 py-2"><!-- Botones de edición --></td>
                                     </tr>
                                 {/each}
@@ -171,7 +173,13 @@ const handleInput = (event) => {
                                         <td class="px-12 py-2">{client.username}</td>
                                         <td class="px-4 py-2">{client.lastName}</td>
                                         <td class="px-4 py-2">{client.total}</td>
-                                        <td class="px-4 py-2"><!-- Barra de porcentaje de pago --></td>
+                                        <td class="px-4 py-2">
+                                            {#if client.capitalPrestado === undefined}
+                                            <progress></progress>
+                                            {:else}
+                                            <progress max="100" value={(client.capitalPrestado / client.total) * 50}></progress>                                                                                                       
+                                            {/if}
+                                        </td>
                                         <td class="px-4 py-2"><!-- Botones de edición --></td>
                                     </tr>
                                 {/each}
