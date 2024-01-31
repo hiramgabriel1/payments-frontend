@@ -6,13 +6,14 @@
     import clientesCancelados from './clientes-cancelados/+page.svelte'
     import clientesPendiente from './pagos-pendientes/+page.svelte'
   
-
+    let loading = true
     let dataClients
     async function getClients(){
     try {
         const clients = await fetch('https://payments-api-jpt5.onrender.com/api/v1/')
         let data = await clients.json()
         dataClients = data
+        loading = false
         console.log(dataClients);
     } catch (error) {
         console.log(error);
@@ -20,7 +21,7 @@
  }
   getClients()
     //total clientes
-    let data = []
+    //let data = []
     /*async function totalclientes(){
         try {
             let url = await fetch('https://payments-api-jpt5.onrender.com/api/v1/')
@@ -101,6 +102,20 @@ const handleInput = (event) => {
                     Historial de pagos
                 </a>
             </button>
+
+            <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100" on:click={clientesPagos}>
+                <a href="/pagos-siete-dias">
+                    Cada 7 dias
+                </a>
+            </button>
+
+            <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+                <a href="/pagos-catorce-dias">
+                    Cada 14 dias
+                </a>
+            </button>
+
+
         </div>
 
         <!--Search-->
@@ -152,43 +167,45 @@ const handleInput = (event) => {
                         <tbody id="tbodyPrincipal" class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
                             <!--Recorrido de los usuarios usando un each en la pagina RecorridoUser.svelte-->
                             <RecorridoUsers />
+                        
                             <!-- Clientes -->
-                            {#if searchResults.length > 0}
-                                {#each searchResults as client}
-                                    <tr>
-                                        <td class="px-4 py-2">{client._id}</td>
-                                        <td class="px-12 py-2">{client.username}</td>
-                                        <td class="px-4 py-2">{client.lastName}</td>
-                                        <td class="px-4 py-2">{client.total}</td>                                                                       
-                                        <td class="px-4 py-2">
-                                            <progress max="100" value={(client.capitalPrestado / client.total) * 10}></progress>                        
-                                        </td>
-                                        <td class="px-4 py-2"><!-- Botones de edición --></td>
-                                    </tr>
-                                {/each}
-                            {:else if dataClients}
-                                {#each dataClients.data as client}
-                                    <tr>
-                                        <td class="px-4 py-2">{client._id}</td>
-                                        <td class="px-12 py-2">{client.username}</td>
-                                        <td class="px-4 py-2">{client.lastName}</td>
-                                        <td class="px-4 py-2">{client.total}</td>
-                                        <td class="px-4 py-2">
-                                            {#if client.capitalPrestado === undefined}
-                                            <progress></progress>
-                                            {:else}
-                                            <progress max="100" value={(client.capitalPrestado / client.total) * 50}></progress>                                                                                                       
-                                            {/if}
-                                        </td>
-                                        <td class="px-4 py-2"><!-- Botones de edición --></td>
-                                    </tr>
-                                {/each}
-                            {:else}
+                            {#if loading}
                                 <tr>
                                     <td colspan="6">Cargando...</td>
                                 </tr>
+                            {:else}
+                                {#if searchResults.length > 0}
+                                    {#each searchResults as client}
+                                        <tr>
+                                            <td class="px-4 py-2">{client._id}</td>
+                                            <td class="px-12 py-2">{client.username}</td>
+                                            <td class="px-4 py-2">{client.lastName}</td>
+                                            <td class="px-4 py-2">{client.total}</td>                                                                       
+                                            <td class="px-4 py-2">
+                                                <progress max="100" value={(client.capitalPrestado / client.total) * 10}></progress>                        
+                                            </td>
+                                        </tr>
+                                    {/each}
+                                {:else if dataClients}
+                                    {#each dataClients.data as client}
+                                        <tr>
+                                            <td class="px-4 py-2">{client._id}</td>
+                                            <td class="px-12 py-2">{client.username}</td>
+                                            <td class="px-4 py-2">{client.lastName}</td>
+                                            <td class="px-4 py-2">{client.total}</td>
+                                            <td class="px-4 py-2">
+                                                {#if client.capitalPrestado === undefined}
+                                                    <progress></progress>
+                                                {:else}
+                                                    <progress max="100" value={(client.capitalPrestado / client.total) * 50}></progress>                                                                                                       
+                                                {/if}
+                                            </td>
+                                            <td class="px-4 py-2"><!-- Botones de edición --></td>
+                                        </tr>
+                                    {/each}                             
+                                {/if}
                             {/if}
-                        </tbody>
+                        </tbody>                        
                     </table>
                     
                 </div>

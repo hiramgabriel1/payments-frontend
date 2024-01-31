@@ -1,6 +1,7 @@
 <script>
     import ModalNewUser from "../../components/ModalNewUser.svelte";
 
+  let loading = true
   let clientesHistorial = []
   let data = [{}]
 
@@ -10,6 +11,7 @@
         let data = await clients.json()
         let clientesFiltrados = data.data.filter(client => client.pagado === true)
         clientesHistorial = clientesFiltrados
+        loading = false
     } catch (error) {
         console.log(error);
     }
@@ -64,6 +66,18 @@ clientesPagos()
             <button  class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
                 Historial de pagos
             </button>
+
+            <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+                <a href="/pagos-siete-dias"> 
+                    Cada 7 dias
+                </a>
+              </button>
+
+              <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+                <a href="/pagos-catorce-dias">
+                    Cada 14 dias
+                </a>
+              </button>
         </div>
 
         <!--Search-->
@@ -113,29 +127,34 @@ clientesPagos()
                             </tr>
                         </thead>
                         <tbody id="tbodyPrincipal" class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900">
-   
                             <!-- Clientes -->
-                            {#if clientesHistorial.length > 0}                             
-                                {#each clientesHistorial as client}
-                                    <tr>
-                                        <td class="px-4 py-2">{client._id}</td>
-                                        <td class="px-12 py-2">{client.username}</td>
-                                        <td class="px-4 py-2">{client.lastName}</td>
-                                        <td class="px-4 py-2">{client.total}</td>
-                                        <td class="px-4 py-2">
-                                            {#if client.capitalPrestado === undefined}
-                                            <progress></progress>
-                                            {:else}
-                                            <progress max="100" value={(client.capitalPrestado / client.total) * 50}></progress>                                                                                                       
-                                            {/if}
-                                        </td>
-                                        <td class="px-4 py-2"><!-- Botones de edición --></td>
-                                    </tr>
-                                {/each}
-                            {:else}
+                            {#if loading}
                                 <tr>
                                     <td colspan="6">Cargando...</td>
                                 </tr>
+                            {:else}
+                                {#if clientesHistorial.length > 0}
+                                    {#each clientesHistorial as client}
+                                        <tr>
+                                            <td class="px-4 py-2">{client._id}</td>
+                                            <td class="px-12 py-2">{client.username}</td>
+                                            <td class="px-4 py-2">{client.lastName}</td>
+                                            <td class="px-4 py-2">{client.total}</td>
+                                            <td class="px-4 py-2">
+                                                {#if client.capitalPrestado === undefined}
+                                                    <progress></progress>
+                                                {:else}
+                                                    <progress max="100" value={(client.capitalPrestado / client.total) * 50}></progress>                                                                                                       
+                                                {/if}
+                                            </td>
+                                            <td class="px-4 py-2"><!-- Botones de edición --></td>
+                                        </tr>
+                                    {/each}
+                                {:else}
+                                    <tr>
+                                        <td colspan="6">No hay datos</td>
+                                    </tr>
+                                {/if}
                             {/if}
                         </tbody>
                     </table>
