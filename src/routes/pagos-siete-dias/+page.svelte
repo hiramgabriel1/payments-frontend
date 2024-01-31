@@ -2,27 +2,49 @@
   import ModalNewUser from "../../components/ModalNewUser.svelte";
 
   let loading = true;
-  let clientesCancelado = [];
+  let clients = [];
 
-  export async function clientesCancelados() {
+  async function getClients() {
     try {
-      const clients = await fetch(
+      const response = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/"
       );
-      let data = await clients.json();
-      let clientesFiltrados = data.data.filter(
-        (client) => client.cancelado === true
-      );
-      clientesCancelado = clientesFiltrados;
+      const data = await response.json();
+      clients = data.data;
       loading = false;
+      console.log(clients);
     } catch (error) {
-      console.log(error);
+      console.error("Error al obtener los clientes:", error);
     }
   }
-  clientesCancelados();
+
+  function calcularFechasDePago(client) {
+    const { fechaPrestamo, fechaPago } = client;
+
+    let fechaInicioPago = new Date(fechaPrestamo);
+    const fechaFinalPago = new Date(fechaPago);
+
+    let fechaInicioPrestamo = new Date(fechaInicioPago);
+    fechaInicioPrestamo.setDate(fechaInicioPrestamo.getDate() + 7);
+
+    const fechasDePago = [];
+
+    while (fechaInicioPrestamo < fechaFinalPago) {
+      fechasDePago.push(new Date(fechaInicioPrestamo));
+      fechaInicioPrestamo.setDate(fechaInicioPrestamo.getDate() + 7);
+    }
+    return fechasDePago;
+  }
+  getClients();
+
+  function formatDate(date) {
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  }
 </script>
 
-<!-- modal -->
 <section class="container px-4 mx-auto">
   <div class="sm:flex sm:items-center sm:justify-between">
     <div>
@@ -31,10 +53,10 @@
           Total clientes:
         </h2>
         <!--Numeros de clientes-->
-        {#if clientesCancelado}
+        {#if clients}
           <span
             class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-            >{clientesCancelado.length} clientes</span
+            >{clients.length} clientes</span
           >
         {:else}
           <span
@@ -65,13 +87,13 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/pagos-pendientes"> Pagos pendientes </a>
+        Pagos pendientes
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        Clientes cancelados
+        <a href="/clientes-cancelados"> Clientes cancelados </a>
       </button>
 
       <button
@@ -83,7 +105,7 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/pagos-siete-dias"> Cada 7 dias </a>
+        Cada 7 dias
       </button>
 
       <button
@@ -168,6 +190,11 @@
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                   >Monto prestamo</th
                 >
+                <th
+                  scope="col"
+                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
+                  >Dias de pago</th
+                >
                 <!--Barra porcentae de pago-->
                 <th
                   scope="col"
@@ -188,25 +215,32 @@
                 <tr>
                   <td colspan="6">Cargando...</td>
                 </tr>
-              {:else if clientesCancelado.length > 0}
-                {#each clientesCancelado as client}
-                  <tr>
-                    <td class="px-4 py-2">{client._id}</td>
-                    <td class="px-12 py-2">{client.username}</td>
-                    <td class="px-4 py-2">{client.lastName}</td>
-                    <td class="px-4 py-2">{client.total}</td>
-                    <td class="px-4 py-2">
-                      {#if client.capitalPrestado === undefined}
-                        <progress></progress>
-                      {:else}
-                        <progress
-                          max="100"
-                          value={(client.capitalPrestado / client.total) * 50}
-                        ></progress>
-                      {/if}
-                    </td>
-                    <td class="px-4 py-2"><!-- Botones de edición --></td>
-                  </tr>
+              {:else if clients.length > 0}
+                {#each clients as client}
+                  {#if client.paymentMethod !== "efectivo"}
+                    <tr>
+                      <td class="px-4 py-2">{client._id}</td>
+                      <td class="px-12 py-2">{client.username}</td>
+                      <td class="px-4 py-2">{client.lastName}</td>
+                      <td class="px-4 py-2">{client.total}</td>
+                      <td class="px-4 py-2">
+                        {#each calcularFechasDePago(client) as fecha}
+                          <div>{formatDate(fecha)}</div>
+                        {/each}
+                      </td>
+                      <td class="px-4 py-2">
+                        {#if client.capitalPrestado === undefined}
+                          <progress></progress>
+                        {:else}
+                          <progress
+                            max="100"
+                            value={(client.capitalPrestado / client.total) * 50}
+                          ></progress>
+                        {/if}
+                      </td>
+                      <td class="px-4 py-2"><!-- Botones de edición --></td>
+                    </tr>
+                  {/if}
                 {/each}
               {:else}
                 <tr>
@@ -274,6 +308,3 @@
     </div>
   </div>
 </section>
-
-<style>
-</style>
