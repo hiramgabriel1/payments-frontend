@@ -1,22 +1,42 @@
 <script>
-    //Obtencion de valores del api
+    import { onMount } from "svelte"
+
+    let currentPage = 0
+    const pageSize = 4
+
     let data = [];
     async function api() {
         try {
             const url = await fetch("https://payments-api-jpt5.onrender.com/api/v1/")
-            //recibiendo la promosea de la api
             let response = await url.json()
-            //data = a la respuesta de la api
             data = response.data; 
             console.log (data)     
         } catch (error) {
-            //console.error()
             return error
         }
     }
-    //llamado de la api
+
     api()
-    //variable reactiva en tiempo real
+
+    async function fetchDataFromAPI() {
+        const startIndex = currentPage * pageSize;
+        const endIndex = startIndex + pageSize;
+        data = await api(startIndex, endIndex);
+    }
+
+    onMount(fetchDataFromAPI);
+
+    async function nextPage() {
+        currentPage++;
+        await fetchDataFromAPI();
+    }
+
+    async function prevPage() {
+        currentPage = Math.max(currentPage - 1, 0);
+        await fetchDataFromAPI();
+    }
+
+    // todo: delete users
     $: url = "https://payments-api-jpt5.onrender.com/api/v1/delete-user/"
 
     
@@ -64,8 +84,8 @@
     
     
 </script>
-
-{#each data.slice(0, countProcessData) as element}
+    {#each data as element}
+        
     <tr>
         <!--Id clientes-->
         <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">

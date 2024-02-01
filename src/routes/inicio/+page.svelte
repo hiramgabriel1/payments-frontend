@@ -1,22 +1,21 @@
 <script>
-    //importacion del modal y del corredor de usuarios
     import ModalNewUser from '../../components/ModalNewUser.svelte';
     import RecorridoUsers from '../../components/RecorridoUsers.svelte';
+    import { onMount, createEventDispatcher } from 'svelte';
 
     let dataClients
-    console.log(dataClients)
     let clientesfiltrados
     async function getClients(){
     try {
         const clients = await fetch('https://payments-api-jpt5.onrender.com/api/v1/')
         let data = await clients.json()
         dataClients = data
-       console.log(dataClients);
     } catch (error) {
         console.log(error);
     }
- }
-  getClients()
+    }
+    getClients()
+    
     //total clientes
     let data = []
     async function totalclientes(){
@@ -29,21 +28,20 @@
             console.error("error")
         }
     }
+
     totalclientes()
 
-
     async function filterAllClients(prop){
-
-     if(prop === 'pagado'){
-       clientesfiltrados = dataClients.data.filter(client => client.pagado === true)
-    } else if(prop === 'pendiente'){
-       clientesfiltrados = dataClients.data.filter(client => client.pagado === false);
-    } else if(prop === 'cancelado'){
-       clientesfiltrados = dataClients.data.filter(client => client.cancelado === true)
-    }
-    else {
-    clientesfiltrados = dataClients.data
-    }
+        if(prop === 'pagado'){
+            clientesfiltrados = dataClients.data.filter(client => client.pagado === true)
+        } else if(prop === 'pendiente'){
+            clientesfiltrados = dataClients.data.filter(client => client.pagado === false);
+        } else if(prop === 'cancelado'){
+            clientesfiltrados = dataClients.data.filter(client => client.cancelado === true)
+        }
+        else {
+            clientesfiltrados = dataClients.data
+        }
    }
 
    let searchTerm = '';
@@ -66,13 +64,34 @@
     };
 
 
+    const dispatch = createEventDispatcher()
+    const itemsPerPage = 4
+    
+    let currentPage = 0
+
     const nextPage = () => {
-        // 
+        const lastPage = Math.ceil(data.length / itemsPerPage) - 1
+        currentPage = currentPage === lastPage ? 0 : currentPage + 1
+        
+        dispatch('pageChanged', { currentPage })
     }
  
     const previousPage = () => {
-        
+        currentPage = currentPage === 0 ? 0 : currentPage - 1;
+        dispatch('pageChanged', { currentPage });
     }
+
+    export const getCurrentPageData = () => {
+        const startIndex = currentPage * itemsPerPage
+        const endIndex = startIndex + itemsPerPage
+
+        return data.slice(startIndex, endIndex)
+    }
+
+    onMount(()=> {
+        console.log("funciona xd");
+    })
+
 </script>
 
 <section class="container px-4 mx-auto">
@@ -170,38 +189,6 @@
                     </table>
                 </div>
             </div>
-        </div>
-    </div>
-
-    <div class="mt-6 sm:flex sm:items-center sm:justify-between ">
-        <div class="text-sm text-gray-500 dark:text-gray-400">
-            Page <span class="font-medium text-gray-700 dark:text-gray-100">1 of 10</span> 
-        </div>
-
-        <div class="flex items-center mt-4 gap-x-4 sm:mt-0">
-            <button 
-                on:click={previousPage}
-                class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
-                </svg>
-
-                <span>
-                    Anterior
-                </span>
-            </button>
-
-            <button
-                on:click={nextPage}
-                class="flex items-center justify-center w-1/2 px-5 py-2 text-sm text-gray-700 capitalize transition-colors duration-200 bg-white border rounded-md sm:w-auto gap-x-2 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-200 dark:border-gray-700 dark:hover:bg-gray-800">
-                <span>
-                    Siguiente
-                </span>
-
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 rtl:-scale-x-100">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3" />
-                </svg>
-            </button>
         </div>
     </div>
 </section>
