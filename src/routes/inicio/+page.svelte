@@ -193,10 +193,10 @@
     </div>
 </section>
 
-<style>
+<!-- <style>
     .div{
         display: flex;     
         justify-content: space-between;
     }
   
-</style>
+</style> -->

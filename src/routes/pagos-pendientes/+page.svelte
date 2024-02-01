@@ -1,7 +1,7 @@
 <script>
     import ModalNewUser from '../../components/ModalNewUser.svelte';       
     import RecorridoUsers from '../../components/RecorridoUsers.svelte';
-
+    // import ModalNewUser from "../../components/ModalNewUser.svelte";
 
     let dataClients
     console.log(dataClients)
@@ -66,6 +66,25 @@
         console.log('Resultados de la búsqueda:', searchResults);
     };
 
+    let loading = true;
+    let clientesPendiente = [];
+
+    export async function clientesPendientes() {
+      try {
+        const clients = await fetch(
+          "https://payments-api-jpt5.onrender.com/api/v1/"
+        );
+        let data = await clients.json();
+        let clientesFiltrados = data.data.filter(
+          (client) => client.pagado === false
+        );
+        clientesPendiente = clientesFiltrados;
+        loading = false;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    clientesPendientes();
 </script>
 
 <section class="container px-4 mx-auto">
@@ -236,36 +255,6 @@
         </div>
     </div>
 </section>
-
-<style>
-    .div{
-        display: flex;     
-        justify-content: space-between;
-    }
-  
-</style><script>
-  import ModalNewUser from "../../components/ModalNewUser.svelte";
-
-  let loading = true;
-  let clientesPendiente = [];
-
-  export async function clientesPendientes() {
-    try {
-      const clients = await fetch(
-        "https://payments-api-jpt5.onrender.com/api/v1/"
-      );
-      let data = await clients.json();
-      let clientesFiltrados = data.data.filter(
-        (client) => client.pagado === false
-      );
-      clientesPendiente = clientesFiltrados;
-      loading = false;
-    } catch (error) {
-      console.log(error);
-    }
-  }
-  clientesPendientes();
-</script>
 
 <!-- modal -->
 <section class="container px-4 mx-auto">
@@ -536,4 +525,9 @@
 </section>
 
 <style>
+  .div{
+      display: flex;     
+      justify-content: space-between;
+  }
+
 </style>
