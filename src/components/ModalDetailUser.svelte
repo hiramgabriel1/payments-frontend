@@ -10,7 +10,7 @@
 </script>
 
 <div class="modal {mostrarModal ? 'visible' : 'invisible'}">
-  <button class="close" on:click={cerrarModal}>X</button>
+  <button class="close" on:click={cerrarModal}>X</button> 
   <div class="modal-content">
     <div id="modal-body">
       <h2>Información del Cliente</h2>
@@ -22,7 +22,6 @@
     </div>
   </div>
 </div>
-
 
 <style>
   .modal {
