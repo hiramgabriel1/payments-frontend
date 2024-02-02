@@ -107,8 +107,8 @@
         name: formData.name,
         apellido: formData.apellido,
         montoPrestamo: parseInt(formData.montoPrestamo),
-        fechaPrestamo: new Date(fechaPrestamo),
-        fechaMaximoPago: new Date(fechaMaximoPago),
+        fechaPrestamo: fechaPrestamo,
+        fechaMaximoPago: fechaMaximoPago,
         nombreBanco: formData.nombreBanco,
       }
 
@@ -120,30 +120,32 @@
           'Content-Type': 'application/json'
         },
 
-        body: JSON.stringify(formData)
+        body: JSON.stringify(dataNew)
       })
 
-      response.ok ? console.log("funciona") : console.log("no funciona lptm")
+      response.ok 
+              ? console.log("funciona") 
+              : console.log("no funciona lptm")
     } catch (error) {
       console.error(error)
     }
   }
 
-  let data = [];
-  let url = "http://localhost:3000/cliente/"
-    async function api(newClient){
-        try{
-            const peticion = await fetch(url, {
-                method: "POST",
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(newClient)
-            })
-        } catch (error){
+  // let data = [];
+  // let url = "http://localhost:3000/cliente/"
+  //   async function api(newClient){
+  //       try{
+  //           const peticion = await fetch(url, {
+  //               method: "POST",
+  //               headers:{
+  //                   'Content-Type': 'application/json'
+  //               },
+  //               body: JSON.stringify(newClient)
+  //           })
+  //       } catch (error){
 
-        }
-    }
+  //       }
+  //   }
 
 
 </script>
