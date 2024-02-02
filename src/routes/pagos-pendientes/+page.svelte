@@ -2,14 +2,14 @@
   import ModalNewUser from "../../components/ModalNewUser.svelte";
   import RecorridoUsers from "../../components/RecorridoUsers.svelte";
   import ModalDetailUser from "../../components/ModalDetailUser.svelte";
-
+  
 
   let mostrarModalDetail = false
   let clienteSeleccionado = null
   let loading = true;
   let clientesPendiente = [];
 
-  export async function clientesPendientes() {
+   export async function clientesPendientes() {
     try {
       const clients = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/"
@@ -193,10 +193,10 @@
               id="tbodyPrincipal"
               class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900"
             >
-            <RecorridoUsers />
+           <!--  <RecorridoUsers {pagosPendiente}/> -->
 
               <!-- Clientes -->
-              {#if loading}
+             {#if loading}
     <tr>
         <td colspan="6">Cargando...</td>
     </tr>
@@ -215,7 +215,7 @@
                 {/if}
             </td>
             <td class="px-4 py-2">
-                <!-- Boton de ver detalles del cliente -->
+
                 <button on:click={() => mostrarDetail(client)} class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center">
                     <span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -225,14 +225,14 @@
                     </span>
                 </button>
             </td>
-            <td class="px-4 py-2"><!-- Botones de edición --></td>
-            <!-- Muestro el modal -->
+            <td class="px-4 py-2"></td>
+
             {#if mostrarModalDetail && clienteSeleccionado._id === client._id}
                 <ModalDetailUser {clienteSeleccionado} {mostrarModalDetail} />
             {/if}
         </tr>
     {/each}
-{/if}
+{/if} 
 
             </tbody>
           </table>

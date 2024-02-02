@@ -1,6 +1,9 @@
 <script>
     //Obtencion de valores del api
-    let data = [];
+    export let data = [];
+    export let pagosPendiente
+    console.log(pagosPendiente)
+
     async function api() {
         try {
             const url = await fetch("https://payments-api-jpt5.onrender.com/api/v1/")
@@ -8,7 +11,7 @@
             let response = await url.json()
             //data = a la respuesta de la api
             data = response.data; 
-            console.log (data)     
+            console.log (data)            
         } catch (error) {
             //console.error()
             return error
@@ -97,12 +100,11 @@
         }
     }
 
-    
-    
 </script>
 
 
 <!--Recorredor de datos de la base de datos(api)-->
+
 {#each data as element}
         <tr>
             <!--Id clientes-->
@@ -314,6 +316,7 @@
                             <button on:click={
                                 ()=>{
                                     let j = document.getElementById("apellido").value
+                                    //showModalEditar = false
                                     let dataActuClient = {
                                         "username": nameUsser,
                                         "lastName": j,
@@ -376,7 +379,7 @@
         </dh-component>
         <!-- Code block ends -->
     {/if}
-    
-{/each}
+    {/each}
+
 
 
