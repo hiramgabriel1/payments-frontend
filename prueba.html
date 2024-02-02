@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barra de Progreso</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+        .progress-container {
+            width: 300px;
+            background-color: #f1f1f1;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        #progress-bar {
+            width: 0;
+            height: 30px;
+            background-color: #4caf50;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        
+        #progress-label {
+            font-size: 18px;
+            color: #333;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="progress-container">
+        <div id="progress-bar"></div>
+        <div id="progress-label">0%</div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Variables
+            const totalAmount = 5000; // Monto total a pagar
+            const totalWeeks = 7;     // Número total de semanas
+            const amountPerWeek = totalAmount / totalWeeks;
+        
+            // Calcula el porcentaje pagado hasta el momento
+            function calculateProgress(weeksPaid) {
+                return (weeksPaid / totalWeeks) * 100;
+            }
+        
+            // Actualiza la barra de progreso y el etiqueta
+            function updateProgressBar(weeksPaid) {
+                const progressBar = document.getElementById("progress-bar");
+                const progressLabel = document.getElementById("progress-label");
+        
+                const progress = calculateProgress(weeksPaid);
+        
+                progressBar.style.width = `${progress}%`;
+                progressLabel.textContent = `${progress.toFixed(2)}%`;
+            }
+        
+            // Ejemplo: si ha pagado la primera semana
+            const weeksPaid = 1;
+            updateProgressBar(weeksPaid);
+        });
+        
+    </script>
+</body>
+</html>

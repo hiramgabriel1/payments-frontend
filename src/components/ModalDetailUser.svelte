@@ -21,7 +21,7 @@
 		  <h2 class="text-xl mb-2">Apellido: {clienteSeleccionado.lastName}</h2>
 		  <p class="text-lg mb-2">Capital prestado: {clienteSeleccionado.capitalPrestado}</p>
 		  <p class="text-lg mb-2">Fecha del prestamo: {clienteSeleccionado.fechaPrestamo.slice(0, 10)}</p>
-		  <p class="text-lg mb-2">Proxima fecha de pago: {clienteSeleccionado.fechaPago.slice(0, 10)}</p>
+		  <p class="text-lg mb-2">Fecha limite de pago: {clienteSeleccionado.fechaPago.slice(0, 10)}</p>
 		  <p class="text-lg mb-2">Metodo de pago: {clienteSeleccionado.paymentMethod}</p>
 		  <p class="text-lg mb-2">Total: {clienteSeleccionado.total}</p>
 		  <p class="text-lg mb-2">Pagado: {clienteSeleccionado.pagado}</p>
