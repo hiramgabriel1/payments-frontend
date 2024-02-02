@@ -5,44 +5,7 @@
   import clientesPagos from "./historial-pagos/+page.svelte";
   import clientesCancelados from "./clientes-cancelados/+page.svelte";
   import clientesPendiente from "./pagos-pendientes/+page.svelte";
-  import ModalDetailUser from "../components/ModalDetailUser.svelte";
-
-
-                          // let dataNewClient = {
-                          //     "nombre": name,
-                          //     "capitalPrestado": monto,
-                          //     "total": total,
-                          //     "fechaPrestamo": fechaPrestamo,
-                          //     "fechaPago": fechaPago,
-                          //     "apellido": apellido,
-                          //     "banco": banco
-                          // }
-                          // api(dataNewClient)
-                          // <button on:click={
-                      // ()=>{
-                          // let name = document.getElementById("name").value
-                          // let monto = parseInt(document.getElementById("montoPrestamo").value);
-                          // let fechaPrestamo = document.getElementById("fechaPrestamo").value;
-                          // let fechaPago = document.getElementById("fechaMaximoPago").value;
-                          // let numeroComoCadena = monto.toFixed(3);
-                          // console.log(numeroComoCadena)
-                          // let calculo = (parseFloat(numeroComoCadena) * 0.15) + (parseFloat(numeroComoCadena));
-                          // let total = calculo.toFixed(3)
-                          // console.log(total)
-                          // let apellido = document.getElementById("apellido").value;
-                          // let banco = document.getElementById("nombreBanco").value;
-                          // let dataNewClient = {
-                          //     "nombre": name,
-                          //     "capitalPrestado": monto,
-                          //     "total": total,
-                          //     "fechaPrestamo": fechaPrestamo,
-                          //     "fechaPago": fechaPago,
-                          //     "apellido": apellido,
-                          //     "banco": banco
-                          // }
-                          // api(dataNewClient)
-                  //     }
-                  // } class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm">Agregar</button>
+  
   let formData = {
     name: '',
     apellido: '',
