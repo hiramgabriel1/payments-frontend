@@ -69,17 +69,6 @@
     } catch (error) {
       console.log(error);
     }
-  }
-
-  getClients();
-
-  let searchTerm = "";
-  let searchResults = [];
-
-  const handleInput = (event) => {
-    searchTerm = event.target.value.toLowerCase();
-    if (searchTerm === "") {
-      searchResults = [];
     }
   };
 

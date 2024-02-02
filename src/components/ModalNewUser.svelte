@@ -1,6 +1,6 @@
 <script>
     let data = [];
-    let url = "http://localhost:3000/cliente/"
+    let url = "https://payments-api-jpt5.onrender.com/api/v1/create-user"
     async function api(newClient){
         try{
             const peticion = await fetch(url, {
@@ -117,13 +117,13 @@
                             let apellido = document.getElementById("apellido").value;
                             let banco = document.getElementById("nombreBanco").value;
                             let dataNewClient = {
-                                "nombre": name,
+                                "username": name,
                                 "capitalPrestado": monto,
                                 "total": total,
                                 "fechaPrestamo": fechaPrestamo,
                                 "fechaPago": fechaPago,
-                                "apellido": apellido,
-                                "banco": banco
+                                "lastName": apellido,
+                                "paymentMethod": banco
                             }
                             api(dataNewClient)
                         }
