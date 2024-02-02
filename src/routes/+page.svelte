@@ -9,10 +9,8 @@
 
 
 
-  let mostrarModal = false
-  console.log(7, mostrarModal)
+  let mostrarModalDetail = false
   let clienteSeleccionado = null
-  console.log(1, clienteSeleccionado)
   let loading = true;
   let dataClients;
   async function getClients() {
@@ -61,10 +59,9 @@
 
   const mostrarDetail = (client) => {
     clienteSeleccionado = client
-    console.log(2, clienteSeleccionado)
-    mostrarModal = true
-    console.log(8, mostrarModal)
+    mostrarModalDetail = true
   }
+
 </script>
 
 <!-- modal -->
@@ -92,8 +89,8 @@
 
     <div class="flex items-center mt-4 gap-x-3">
       <!--Modal creacion de nuevos usuarios-->
-      <ModalNewUser />
-    </div>
+        <ModalNewUser />
+    </div> 
   </div>
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
@@ -282,8 +279,9 @@
                 <td class="px-4 py-2"><!-- Botones de edición --></td>
               </tr>
               <!-- Muestro el modal -->
-              {#if mostrarModal && clienteSeleccionado._id === client._id}
-                <ModalDetailUser {clienteSeleccionado} {mostrarModal} />
+              {#if mostrarModalDetail && clienteSeleccionado._id === client._id}
+                <ModalDetailUser {clienteSeleccionado} {mostrarModalDetail} />
+
               {/if}
             {/each}
               {/if}
