@@ -47,24 +47,56 @@
     //donde se guardaran los datos recibidos
     let newDataEliminar = [];
 
+
+    let urlId = "https://payments-api-jpt5.onrender.com/api/v1/";
+    let urlUsserUpdate = "https://payments-api-jpt5.onrender.com/api/v1/edit-user/"
+
     //metodo get para recibir los datos del usser para editar, visualizar u eliminar
-    async function btnusser() {
+    async function btnusser(url, secu) {
         try {
-            const metodoGet = await fetch("https://payments-api-jpt5.onrender.com/api/v1/" + idDelete,{
+            const metodoGet = await fetch(url + secu,{
                 method: 'GET',
                 headers: {'Content-Type': 'application/json'}
             })
             //recibiendo la promosea de la api
             let response = await metodoGet.json()
             //data = a la respuesta de la api
+            newDataEliminar = ""
             newDataEliminar = response;
             console.log(newDataEliminar)
+            
+            
 
         } catch (error) {
             //console.error()
             return error
         }
     }
+
+
+    
+    let nameUsser;
+    let apellidoUsser;
+    let montoPrestamo;
+    let nombreBanco;
+    let fechaPrestamo;
+    let fechaPago
+    let nameActual;
+
+    async function actu(userNAME, dataActu){
+        try {
+            const methoActu = await fetch(urlUsserUpdate+userNAME,{
+                method: "PATCH",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(dataActu)
+            })
+            let response = await methoActu.json()
+            console.log(response)
+        } catch (error) {
+            console.error("el usuario no se ha podido actualizar")
+        }
+    }
+
     
     
 </script>
@@ -108,8 +140,15 @@
                 <div class="inline-flex items-center rounded-md shadow-sm">
                     <!--Editar usuario-->
                     <button on:click={()=>{
-                        alert(element._id)
                         showModalEditar = true;
+                        nameUsser = element.username;
+                        apellidoUsser = element.lastName;
+                        montoPrestamo = element.capitalPrestado;
+                        nombreBanco = element.paymentMethod;
+                        fechaPrestamo = element.fechaPrestamo;
+                        fechaPago = element.fechaPago;
+                        nameActual = element._id
+
                     }} class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-l-lg font-medium px-4 py-2 inline-flex space-x-1 items-center">
                         <span><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -119,7 +158,6 @@
                     <!--Vista previa del usser-->
                     <button on:click={()=>{
                         alert(element._id)
-                        showModalEditar = true;
                     }} class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200  font-medium px-4 py-2 inline-flex space-x-1 items-center">
                         <span>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
@@ -133,9 +171,8 @@
                         ()=>{
                             showModal = true;
                             idDelete = element._id;
-                            alert(idDelete)
-                            btnusser()
-
+                            nameUsser = element.username;
+                            apellidoUsser = element.lastName;
                         }
                     } class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center">
                         <span>
@@ -164,7 +201,7 @@
                      <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
                  </svg>
                  <h2 class="text-xl font-bold py-4 ">¿Estas seguro?</h2>
-                 <p class="text-sm text-gray-500 px-8">Eliminaras a {newDataEliminar.username} {newDataEliminar.lastName}</p>    
+                 <p class="text-sm text-gray-500 px-8">Eliminaras a {nameUsser} {apellidoUsser}</p>    
          </div>
          <!--footer-->
          <div class="p-3  mt-2 text-center space-x-4 md:block">
@@ -178,6 +215,7 @@
              <button on:click={
                  ()=>{
                     let newUrl = url.concat(idDelete);
+                    btnusser(urlId, idDelete)
                     deleteUsser(newUrl);
                     showModal = false;
                     
@@ -208,12 +246,12 @@
                         
                         <!--Nombre-->
                         <label for="name" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Nombre</label>
-                        <input value="{newDataEliminar.username}" id="name" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="James" />
+                        <input value="{nameUsser}" id="name" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="James" />
                         
                         
                         <!--Apellido-->
                         <label for="apellido" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Apellido</label>
-                        <input value="{newDataEliminar.lastName}" id="apellido" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="Gonzales" />
+                        <input value="{apellidoUsser}" id="apellido" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="Gonzales" />
                         
                         <!--Monto del prestamo-->
                         <label for="montoPrestamo" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Capital prestado</label>
@@ -227,7 +265,7 @@
                                     <line x1="11" y1="15" x2="13" y2="15" />
                                 </svg>
                             </div>
-                            <input value="{newDataEliminar.capitalPrestado}" type="number" id="montoPrestamo" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" placeholder="Monto total" />
+                            <input value="{montoPrestamo}" type="number" id="montoPrestamo" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" placeholder="Monto total" />
                         </div>
 
                         <!--Fecha de prestamo-->
@@ -243,7 +281,7 @@
                                     <rect x="8" y="15" width="2" height="2" />
                                 </svg>
                             </div>
-                            <input value="{newDataEliminar.fechaPrestamo}" type="date" id="fechaPrestamo" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="MM/YY" />
+                            <input value="{fechaPrestamo}" type="text" id="fechaPrestamo" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="MM/YY" />
                         </div>
 
                         <!--Fecha maxima de pago-->
@@ -257,7 +295,7 @@
                                     <polyline points="11 12 12 12 12 16 13 16"></polyline>
                                 </svg>
                             </div>
-                            <input value="{newDataEliminar.fechaPago}" type="date" id="fechaMaximoPago" class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="MM/YY" />
+                            <input value="{fechaPago}" type="text" id="fechaMaximoPago" class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="MM/YY" />
                         </div>
 
 
@@ -269,14 +307,22 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
                                 </svg>
                             </div>
-                            <input value="sebas" type="text" id="nombreBanco" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" placeholder="BVBA" />
+                            <input value="{nombreBanco}" type="text" id="nombreBanco" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" placeholder="BVBA" />
                         </div>
                         <div class="flex items-center justify-start w-full">
                             <!--Btn guardar datos-->
                             <button on:click={
                                 ()=>{
-                                    let banco = document.getElementById("nombreBanco").value;
-                                    alert(banco)
+                                    let j = document.getElementById("apellido").value
+                                    let dataActuClient = {
+                                        "username": nameUsser,
+                                        "lastName": j,
+                                        "capitalPrestado": montoPrestamo,
+                                        "fechaPrestamo": fechaPrestamo,
+                                        "fechaPago": fechaPago,
+                                        "paymentMethod": fechaPago
+                                    }
+                                    actu(nameActual, dataActuClient)
                                 }
                             } class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm">enviar</button>
                             <button class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm" onclick="modalHandler()" on:click={()=>{

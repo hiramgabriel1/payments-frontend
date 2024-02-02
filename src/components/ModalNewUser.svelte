@@ -1,5 +1,4 @@
 <script>
-    let data = [];
     let url = "https://payments-api-jpt5.onrender.com/api/v1/create-user"
     async function api(newClient){
         try{
@@ -14,8 +13,6 @@
 
         }
     }
-    
-
 </script>
 
 
