@@ -22,7 +22,6 @@
     <button class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 mx-auto transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm" onclick="modalHandler(true)">Agregar cliente</button>
 </div>
 
-
 <!--Comienzo del modal-->
 <dh-component>
     <div style="display: none;" class="py-12  transition duration-150 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0" id="modal">
@@ -142,7 +141,7 @@
         </div>
     </div>
     
-    <script>
+    <!-- <script>
         let modal = document.getElementById("modal");
         function modalHandler(val) {
             if (val) {
@@ -173,6 +172,6 @@
                 }
             })();
         }
-    </script>  
+    </script>   -->
 </dh-component>
 <!-- Code block ends -->
