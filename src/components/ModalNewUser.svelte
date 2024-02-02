@@ -41,6 +41,7 @@
                 <label for="name" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Nombre</label>
                 <input id="name" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="James" />
                 
+                
                 <!--Apellido-->
                 <label for="apellido" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Apellido</label>
                 <input id="apellido" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="Gonzales" />
@@ -172,7 +173,6 @@
                 }
             })();
         }
-    </script>
-    
+    </script>  
 </dh-component>
 <!-- Code block ends -->
