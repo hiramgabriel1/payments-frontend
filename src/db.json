@@ -1,54 +1,59 @@
 {
   "cliente": [
     {
-      "id": "a9d9",
-      "nombre": "Sebastian",
-      "capitalPrestado": 1,
-      "total": "1.150",
-      "fechaPrestamo": "2222-02-22",
-      "fechaPago": "1111-11-11",
-      "apellido": "ramirez",
-      "banco": "BVBBA"
+      "username": "Sebastian",
+      "lastName" : "ramirez",
+      "capitalPrestado": 1700,
+      "total": 2150,
+      "fechaPrestamo": "2023-11-22",
+      "fechaPago": "2023-12-22",
+      "paymentMethod": "BVBBA",
+      "pagado":false,
+      "cancelado": true
     },
     {
-      "id": "a8d8",
-      "nombre": "Alex",
-      "capitalPrestado": 1,
-      "total": "1.350",
-      "fechaPrestamo": "2223-03-22",
-      "fechaPago": "1111-12-12",
-      "apellido": "bris",
-      "banco": "BVBBA"
+      "username": "Alex",
+      "lastName": "bris",
+      "capitalPrestado": 3500,
+      "total": 2350,
+      "fechaPrestamo": "2023-09-22",
+      "fechaPago": "2023-10-22",
+      "paymentMethod": "BVBBA",
+      "pagado":true,
+      "cancelado": false
     },
     {
-      "id": "a7d7",
-      "nombre": "Lucas",
-      "capitalPrestado": 2,
-      "total": "1.050",
-      "fechaPrestamo": "2222-03-23",
-      "fechaPago": "1111-13-13",
-      "apellido": "visa",
-      "banco": "BVBBA"
+      "username": "Lucas",
+      "lastName": "visa",
+      "capitalPrestado": 2500,
+      "total": 1050,
+      "fechaPrestamo": "2023-03-23",
+      "fechaPago": "2023-04-23",
+      "paymentMethod": "BVBBA",
+      "pagado":false,
+      "cancelado": true
     },
     {
-      "id": "a6d6",
-      "nombre": "Jose",
-      "capitalPrestado": 3,
-      "total": "1.550",
-      "fechaPrestamo": "2222-04-24",
-      "fechaPago": "1111-14-14",
-      "apellido": "perez",
-      "banco": "BVBBA"
+      "username": "Jose",
+      "lastName": "perez",
+      "capitalPrestado": 3000,
+      "total": 1550,
+      "fechaPrestamo": "2020-04-24",
+      "fechaPago": "2020-05-24",
+      "paymentMethod": "BVBBA",
+      "pagado":true,
+      "cancelado": false
     },
     {
-      "id": "a5d5",
-      "nombre": "Damian",
-      "capitalPrestado": 1,
-      "total": "1.250",
-      "fechaPrestamo": "2222-05-25",
-      "fechaPago": "1111-15-15",
-      "apellido": "rodrigues",
-      "banco": "BVBBA"
+      "username": "Damian",
+      "lastName": "rodrigues",
+      "capitalPrestado": 1000,
+      "total": 1250,
+      "fechaPrestamo": "2023-05-25",
+      "fechaPago": "2023-6-25",
+      "paymentMethod": "BVBBA",
+      "pagado":false,
+      "cancelado": true
     }
   ]
 }

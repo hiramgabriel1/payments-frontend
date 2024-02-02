@@ -1,142 +1,51 @@
 <script>
-  //importacion del modal y del corredor de usuarios
-  import ModalNewUser from "../components/ModalNewUser.svelte";
-  import RecorridoUsers from "../components/RecorridoUsers.svelte";
-  import clientesPagos from "./historial-pagos/+page.svelte";
-  import clientesCancelados from "./clientes-cancelados/+page.svelte";
-  import clientesPendiente from "./pagos-pendientes/+page.svelte";
-  import ModalDetailUser from "../components/ModalDetailUser.svelte";
+  import ModalNewUser from "../../components/ModalNewUser.svelte";
+  import RecorridoUsers from "../../components/RecorridoUsers.svelte";
+  import ModalDetailUser from "../../components/ModalDetailUser.svelte";
 
-
-                          // let dataNewClient = {
-                          //     "nombre": name,
-                          //     "capitalPrestado": monto,
-                          //     "total": total,
-                          //     "fechaPrestamo": fechaPrestamo,
-                          //     "fechaPago": fechaPago,
-                          //     "apellido": apellido,
-                          //     "banco": banco
-                          // }
-                          // api(dataNewClient)
-                          // <button on:click={
-                      // ()=>{
-                          // let name = document.getElementById("name").value
-                          // let monto = parseInt(document.getElementById("montoPrestamo").value);
-                          // let fechaPrestamo = document.getElementById("fechaPrestamo").value;
-                          // let fechaPago = document.getElementById("fechaMaximoPago").value;
-                          // let numeroComoCadena = monto.toFixed(3);
-                          // console.log(numeroComoCadena)
-                          // let calculo = (parseFloat(numeroComoCadena) * 0.15) + (parseFloat(numeroComoCadena));
-                          // let total = calculo.toFixed(3)
-                          // console.log(total)
-                          // let apellido = document.getElementById("apellido").value;
-                          // let banco = document.getElementById("nombreBanco").value;
-                          // let dataNewClient = {
-                          //     "nombre": name,
-                          //     "capitalPrestado": monto,
-                          //     "total": total,
-                          //     "fechaPrestamo": fechaPrestamo,
-                          //     "fechaPago": fechaPago,
-                          //     "apellido": apellido,
-                          //     "banco": banco
-                          // }
-                          // api(dataNewClient)
-                  //     }
-                  // } class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm">Agregar</button>
-  let formData = {
-    name: '',
-    apellido: '',
-    montoPrestamo: '',
-    fechaPrestamo: '',
-    fechaMaximoPago: '',
-    nombreBanco: '',
-  }
 
   let mostrarModalDetail = false
   let clienteSeleccionado = null
   let loading = true;
-  let dataClients;
+  let clientesPendiente = [];
 
-  async function getClients() {
+  export async function clientesPendientes() {
     try {
       const clients = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/"
       );
       let data = await clients.json();
-      dataClients = data;
+      let clientesFiltrados = data.data.filter(
+        (client) => client.pagado === false
+      );
+      clientesPendiente = clientesFiltrados;
       loading = false;
-      console.log(dataClients);
     } catch (error) {
       console.log(error);
     }
-    }
-  };
-
-  const handleSearch = () => {
-    searchResults = dataClients.data.filter((client) => {
-      return client.username.toLowerCase().includes(searchTerm);
-    });
-  };
+  }
+  clientesPendientes();
 
   const mostrarDetail = (client) => {
     clienteSeleccionado = client
     mostrarModalDetail = true
   }
 
-  // show modal
-  let modalHandler
+  let data = [];
+    let url = "http://localhost:3000/cliente/"
+    async function api(newClient){
+        try{
+            const peticion = await fetch(url, {
+                method: "POST",
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newClient)
+            })
+        } catch (error){
 
-  const submitDataUser = async () => {
-    try {
-      let fechaPrestamo = formData.fechaPrestamo
-      let fechaMaximoPago = formData.fechaMaximoPago
-
-      const dataNew = {
-        convertMontoPrestamo: parseInt(formData.montoPrestamo),
-        name: formData.name,
-        apellido: formData.apellido,
-        montoPrestamo: parseInt(formData.montoPrestamo),
-        fechaPrestamo: fechaPrestamo,
-        fechaMaximoPago: fechaMaximoPago,
-        nombreBanco: formData.nombreBanco,
-      }
-
-      // console.log(typeof dataNew.convertMontoPrestamo);
-
-      const response = await fetch("https://payments-api-jpt5.onrender.com/api/v1/create-user", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-
-        body: JSON.stringify(dataNew)
-      })
-
-      response.ok 
-              ? console.log("funciona") 
-              : console.log("no funciona lptm")
-    } catch (error) {
-      console.error(error)
+        }
     }
-  }
-
-  // let data = [];
-  // let url = "http://localhost:3000/cliente/"
-  //   async function api(newClient){
-  //       try{
-  //           const peticion = await fetch(url, {
-  //               method: "POST",
-  //               headers:{
-  //                   'Content-Type': 'application/json'
-  //               },
-  //               body: JSON.stringify(newClient)
-  //           })
-  //       } catch (error){
-
-  //       }
-  //   }
-
-
 </script>
 
 <!-- modal -->
@@ -148,10 +57,10 @@
           Total clientes:
         </h2>
         <!--Numeros de clientes-->
-        {#if dataClients}
+        {#if clientesPendiente}
           <span
             class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-            >{dataClients.data.length} clientes</span
+            >{clientesPendiente.length} clientes</span
           >
         {:else}
           <span
@@ -163,11 +72,7 @@
     </div>
 
     <div class="w-full flex justify-center py-12" id="button">
-      <button 
-        class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 mx-auto transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm" 
-        on:click={() => modalHandler = true}>
-          Agregar cliente
-      </button>
+      <button class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 mx-auto transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm" onclick="modalHandler(true)">Agregar cliente</button>
   </div>
   </div>
 
@@ -184,28 +89,24 @@
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        on:click={clientesPendiente}
       >
-        <a href="/pagos-pendientes"> Pagos pendientes </a>
+        Pagos pendientes
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        on:click={clientesCancelados}
       >
         <a href="/clientes-cancelados"> Clientes cancelados </a>
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        on:click={clientesPagos}
       >
         <a href="/historial-pagos"> Historial de pagos </a>
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        on:click={clientesPagos}
       >
         <a href="/pagos-siete-dias"> Cada 7 dias </a>
       </button>
@@ -219,7 +120,7 @@
 
     <!--Search-->
     <div class="relative flex items-center mt-4 md:mt-0">
-      <button on:click={handleSearch} type="submit" class="absolute">
+      <button type="submit" class="absolute">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -237,7 +138,6 @@
       </button>
 
       <input
-        on:input={handleInput}
         type="text"
         placeholder="Search..."
         class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
@@ -308,61 +208,47 @@
               id="tbodyPrincipal"
               class="bg-white divide-y divide-gray-200 dark:divide-gray-700 dark:bg-gray-900"
             >
-              <!--Recorrido de los usuarios usando un each en la pagina RecorridoUser.svelte-->
-              <RecorridoUsers />
+            <RecorridoUsers />
 
-              <!-- Clientes -->             
-
+              <!-- Clientes -->
               {#if loading}
-                <tr>
-                  <td colspan="6">Cargando...</td>
-                </tr>
-              {:else if searchResults.length > 0}
-                {#each searchResults as client}
-                  <tr>
-                    <td class="px-4 py-2">{client._id}</td>
-                    <td class="px-12 py-2">{client.username}</td>
-                    <td class="px-4 py-2">{client.lastName}</td>
-                    <td class="px-4 py-2">{client.total}</td>
-                    <td class="px-4 py-2">
-                      <progress max="100" value={(client.capitalPrestado / client.total) * 10}></progress>
-                    </td>
-                  </tr>
-                {/each}
-              {:else if dataClients}
-              {#each dataClients.data as client}
-              <tr>
-                <td class="px-4 py-2">{client._id}</td>
-                <td class="px-12 py-2">{client.username}</td>
-                <td class="px-4 py-2">{client.lastName}</td>
-                <td class="px-4 py-2">{client.total}</td>
-                <td class="px-4 py-2">
-                  {#if client.capitalPrestado === undefined}
+    <tr>
+        <td colspan="6">Cargando...</td>
+    </tr>
+{:else if clientesPendiente.length > 0}
+    {#each clientesPendiente as client}
+        <tr>
+            <td class="px-4 py-2">{client._id}</td>
+            <td class="px-12 py-2">{client.username}</td>
+            <td class="px-4 py-2">{client.lastName}</td>
+            <td class="px-4 py-2">{client.total}</td>
+            <td class="px-4 py-2">
+                {#if client.capitalPrestado === undefined}
                     <progress></progress>
-                  {:else}
+                {:else}
                     <progress max="100" value={(client.capitalPrestado / client.total) * 50}></progress>
-                  {/if}
-                </td>
-                <td class="px-4 py-2">
-                  <!-- Boton de ver detalles del cliente -->
-                  <button on:click={() => mostrarDetail(client)} class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center">
+                {/if}
+            </td>
+            <td class="px-4 py-2">
+                <!-- Boton de ver detalles del cliente -->
+                <button on:click={() => mostrarDetail(client)} class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center">
                     <span>
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>                      
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>                      
                     </span>
-                  </button>
-                </td>
-                <td class="px-4 py-2"><!-- Botones de edición --></td>
-              </tr>
-              <!-- Muestro el modal -->
-              {#if mostrarModalDetail && clienteSeleccionado._id === client._id}
+                </button>
+            </td>
+            <td class="px-4 py-2"><!-- Botones de edición --></td>
+            <!-- Muestro el modal -->
+            {#if mostrarModalDetail && clienteSeleccionado._id === client._id}
                 <ModalDetailUser {clienteSeleccionado} {mostrarModalDetail} />
+            {/if}
+        </tr>
+    {/each}
+{/if}
 
-              {/if}
-            {/each}
-              {/if}
             </tbody>
           </table>
         </div>
@@ -425,13 +311,9 @@
   </div>
 </section>
 
-<!-- modal here -->
-{#if modalHandler}
-  <div class="py-12 transition duration-150 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0" id="modal">
-      <form 
-        on:submit|preventDefault={submitDataUser} 
-        role="alert" 
-        class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
+<dh-component>
+  <div style="display: none;" class="py-12  transition duration-150 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0" id="modal">
+      <div role="alert" class="container mx-auto w-11/12 md:w-2/3 max-w-lg">
           <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400">
               <div class="w-full flex justify-start text-gray-600 mb-3">
                   <svg  xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-wallet" width="52" height="52" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -444,19 +326,12 @@
               
               <!--Nombre-->
               <label for="name" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Nombre</label>
-              <input 
-                id="name" 
-                class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" 
-                bind:value={formData.name}
-                placeholder="James" />
+              <input id="name" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="James" />
+              
               
               <!--Apellido-->
               <label for="apellido" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Apellido</label>
-              <input 
-                id="apellido" 
-                class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" 
-                bind:value={formData.apellido}
-                placeholder="Gonzales" />
+              <input id="apellido" class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="Gonzales" />
               
               <!--Monto del prestamo-->
               <label for="montoPrestamo" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Capital prestado</label>
@@ -470,12 +345,7 @@
                           <line x1="11" y1="15" x2="13" y2="15" />
                       </svg>
                   </div>
-                  <input 
-                    type="number" 
-                    id="montoPrestamo" 
-                    class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" 
-                    bind:value={formData.montoPrestamo}
-                    placeholder="Monto total" />
+                  <input type="number" id="montoPrestamo" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" placeholder="Monto total" />
               </div>
 
               <!--Fecha de prestamo-->
@@ -491,12 +361,7 @@
                           <rect x="8" y="15" width="2" height="2" />
                       </svg>
                   </div>
-                  <input 
-                    type="date" 
-                    id="fechaPrestamo" 
-                    class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" 
-                    bind:value={formData.fechaPrestamo}
-                    placeholder="MM/YY" />
+                  <input type="date" id="fechaPrestamo" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="MM/YY" />
               </div>
 
               <!--Fecha maxima de pago-->
@@ -510,13 +375,9 @@
                           <polyline points="11 12 12 12 12 16 13 16"></polyline>
                       </svg>
                   </div>
-                  <input 
-                    type="date" 
-                    id="fechaMaximoPago" 
-                    class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" 
-                    bind:value={formData.fechaMaximoPago}
-                    placeholder="MM/YY" />
+                  <input type="date" id="fechaMaximoPago" class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border" placeholder="MM/YY" />
               </div>
+
 
               <!--Nombre del banco-->
               <label for="nombreBanco" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Nombre del banco</label>
@@ -526,37 +387,78 @@
                           <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
                       </svg>
                   </div>
-                  <input 
-                    type="text" 
-                    id="nombreBanco" 
-                    class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" 
-                    bind:value={formData.nombreBanco}
-                    placeholder="BVBA" />
+                  <input type="text" id="nombreBanco" class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border" placeholder="BVBA" />
               </div>
               <div class="flex items-center justify-start w-full">
                   <!--Btn guardar datos-->
-                  <button type="submit">
-                      Agregar
-                  </button>
-        
-                  <button 
-                    class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm" 
-                    on:click={() => modalHandler = false}>
-                    Cancelar
-                  </button>
+                  <button on:click={
+                      ()=>{
+                          let name = document.getElementById("name").value
+                          let monto = parseInt(document.getElementById("montoPrestamo").value);
+                          let fechaPrestamo = document.getElementById("fechaPrestamo").value;
+                          let fechaPago = document.getElementById("fechaMaximoPago").value;
+                          let numeroComoCadena = monto.toFixed(3);
+                          console.log(numeroComoCadena)
+                          let calculo = (parseFloat(numeroComoCadena) * 0.15) + (parseFloat(numeroComoCadena));
+                          let total = calculo.toFixed(3)
+                          console.log(total)
+                          let apellido = document.getElementById("apellido").value;
+                          let banco = document.getElementById("nombreBanco").value;
+                          let dataNewClient = {
+                              "nombre": name,
+                              "capitalPrestado": monto,
+                              "total": total,
+                              "fechaPrestamo": fechaPrestamo,
+                              "fechaPago": fechaPago,
+                              "apellido": apellido,
+                              "banco": banco
+                          }
+                          api(dataNewClient)
+                      }
+                  } class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-8 py-2 text-sm">enviar</button>
+                  <button class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm" onclick="modalHandler()">Cancel</button>
               </div>
-              <button 
-                  class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600" 
-                  on:click={() => modalHandler = false} 
-                  aria-label="close modal" 
-                  type="button">
-                  <svg xmlns="http://www.w3.org/2000/svg"  class="icon icon-tabler icon-tabler-x" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <button class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600" onclick="modalHandler()" aria-label="close modal" type="button">
+                  <svg  xmlns="http://www.w3.org/2000/svg"  class="icon icon-tabler icon-tabler-x" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                       <path stroke="none" d="M0 0h24v24H0z" />
                       <line x1="18" y1="6" x2="6" y2="18" />
                       <line x1="6" y1="6" x2="18" y2="18" />
                   </svg>
               </button>
           </div>
-      </form>
+      </div>
   </div>
-{/if}
+  
+  <script>
+      let modal = document.getElementById("modal");
+      function modalHandler(val) {
+          if (val) {
+              fadeIn(modal);
+              modal.style.display = "flex"
+          } else {
+              fadeOut(modal);
+          }
+      }
+      function fadeOut(el) {
+          el.style.opacity = 1;
+          (function fade() {
+              if ((el.style.opacity -= 0.1) < 0) {
+                  el.style.display = "none";
+              } else {
+                  requestAnimationFrame(fade);
+              }
+          })();
+      }
+      function fadeIn(el, display) {
+          el.style.opacity = 0;
+          el.style.display = display || "flex";
+          (function fade() {
+              let val = parseFloat(el.style.opacity);
+              if (!((val += 0.2) > 1)) {
+                  el.style.opacity = val;
+                  requestAnimationFrame(fade);
+              }
+          })();
+      }
+  </script>  
+</dh-component>
