@@ -55,7 +55,7 @@
 
 </script>
 
-<section class="container px-4 mx-auto">
+<section class="container mt-24 px-4 mx-auto">
   <div class="sm:flex sm:items-center sm:justify-between">
     <div>
       <div class="flex items-center gap-x-3">
@@ -79,48 +79,34 @@
 
     <div class="flex items-center mt-4 gap-x-3">
       <!--Modal creacion de nuevos usuarios-->
-      <ModalNewUser />
+
     </div>
   </div>
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
-    <div
-      class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
-    >
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
-      >
-        <a href="/"> Clientes </a>
+    <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300">
+        <a href="/">Clientes</a>
       </button>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/pagos-pendientes"> Pagos pendientes </a>
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        <a href="/pagos-pendientes">Pagos pendientes</a>
       </button>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/clientes-cancelados"> Clientes cancelados </a>
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        <a href="/clientes-cancelados">Clientes cancelados</a>
       </button>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/historial-pagos"> Historial de pagos </a>
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        <a href="/historial-pagos">Historial de pagos</a>
       </button>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="pagos-siete-dias"> Cada 7 dias </a>
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        <a href="pagos-siete-dias">Cada 7 dias</a>
       </button>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Cada 14 dias
       </button>
     </div>
@@ -229,18 +215,18 @@
                 {#each clients as client}
                   {#if client.paymentMethod === "efectivo"}
                     <tr>
-                      <td class="px-4 py-2">{client._id}</td>
-                      <td class="px-12 py-2">{client.username}</td>
-                      <td class="px-4 py-2">{client.lastName}</td>
-                      <td class="px-4 py-2">{client.total}</td>
-                      <td class="px-4 py-2">
+                      <td class="px-4 py-6 text-sm font-medium text-gray-800 dark:text-white ">{client._id}</td>
+                      <td class="px-12 py-6 text-gray-700 text-sm">{client.username}</td>
+                      <td class="px-4 py-6 text-gray-700 text-sm">{client.lastName}</td>
+                      <td class="px-4 py-6 text-gray-700 text-sm">{client.total}</td>
+                      <td class="px-4 py-6 text-gray-700 text-sm">
                         {#each calcularFechasDePago(client) as fecha}
                           <div>{formatDate(fecha)}</div>
                         {/each}
                       </td>
                       <td class="px-4 py-2">
                         {#if client.capitalPrestado === undefined}
-                          <progress></progress>
+                          <progress class="w-44 bg-gray-200 rounded-full h-3.5 dark:bg-gray-200"></progress>
                           <!-- Boton de ver detalles del cliente -->
                           <button
                             class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center"
@@ -267,8 +253,8 @@
                               </svg>
                             </span>
                           </button>
-                        {:else}
-                          <progress max="100" value={(client.capitalPrestado / client.total) * 50}></progress>
+                        {:else}                                              
+                              <progress class="w-44 bg-gray-200 rounded-full h-3.5 dark:bg-gray-200" max="100" value={(client.capitalPrestado / client.total) * 50}></progress>                                            
                           <!-- Boton de ver detalles del cliente -->
                           <button on:click={() => mostrarDetail(client)} class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center">
                             <span>
