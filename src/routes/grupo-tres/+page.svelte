@@ -4,59 +4,54 @@
   let modalDetail;
   let modalDelete;
   let loading = true;
-  let clientesCancelado = [];
+  let dataClients;
 
   let formData = {
     username: "",
     lastName: "",
     capitalPrestado: "",
-    total: total,
+    total: "",
     fechaPrestamo: "",
     fechaPago: "",
     paymentMethod: "",
-    direccion: "",
-    modalityPayment: "",
     pagado: false,
     cancelado: false,
   };
+  console.log(formData.pagado);
+  console.log(formData.cancelado);
 
-  var total;
-  function calcularTotal() {
-    const comision = formData.capitalPrestado * 0.15;
-    return (total = formData.capitalPrestado + comision);
-  }
-
-  export async function clientesCancelados() {
+  async function getClients() {
     try {
       const clients = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/"
       );
       let data = await clients.json();
-      let clientesFiltrados = data.data.filter(
-        (client) => client.cancelado === true
-      );
-      clientesCancelado = clientesFiltrados;
+      dataClients = data.data;
       loading = false;
+      console.log(dataClients);
     } catch (error) {
       console.log(error);
     }
   }
-  clientesCancelados();
 
+  getClients();
+
+  //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
     try {
+      /*  let fechaPrestamo = formData.fechaPrestamo;
+        let fechaPago = formData.fechaMaximoPago; */
+
       const dataNew = {
-        /* convertMontoPrestamo: parseInt(formData.montoPrestamo), */
         username: formData.username,
         lastName: formData.lastName,
         capitalPrestado: formData.capitalPrestado,
         total: formData.total,
         fechaPrestamo: formData.fechaPrestamo,
-        fechaPago: form.fechaPago,
+        fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
-        direccion: formData.direccion,
-        modalityPayment: formData.modalityPayment,
       };
+
       console.log(dataNew);
       // console.log(typeof dataNew.convertMontoPrestamo);
 
@@ -79,6 +74,7 @@
     }
   };
 
+  //Función que Actualiza un cliente
   let patchUser;
   let idUser;
   async function actualizarUser() {
@@ -101,7 +97,7 @@
   }
 
   //Función que elimina usuario
-  export async function deleteClientsCancelados(idDelete) {
+  export async function deleteClientsPendientes(idDelete) {
     const response = await fetch(
       `https://payments-api-jpt5.onrender.com/api/v1/delete-user/${idDelete}`,
       {
@@ -112,6 +108,7 @@
     const deletedClient = await response.json();
     console.log("cliente eliminado con exito " + deletedClient);
     modalDelete = false;
+    window.location.reload();
   }
 
   /* Search */
@@ -126,12 +123,13 @@
   };
 
   const handleSearch = () => {
-    searchResults = clientesCancelado.filter((client) => {
+    searchResults = dataClients.filter((client) => {
       return client.username.toLowerCase().includes(searchTerm);
     });
     console.log(searchResults);
   };
 
+  //Detalles del cliente
   let clienteDetail = [];
   const mostrarModalDetail = (client) => {
     let clienteDetailArray = [client];
@@ -139,6 +137,7 @@
     modalDetail = true;
   };
 
+  //Eliminar usuario
   let clienteDelete;
   const mostrarModalDelete = (client) => {
     let clienteDeleteArray = [client];
@@ -146,6 +145,7 @@
     modalDelete = true;
   };
 
+  //Actualizar usuario
   const newData = (client) => {
     modalEditar = true;
     idUser = client._id;
@@ -155,34 +155,32 @@
 <!-- modal -->
 <section class="container px-4 mx-auto">
   <div class="sm:flex sm:items-center sm:justify-between">
-    <div>
-      <div class="flex items-center gap-x-3">
-        <h2 class="text-lg font-medium text-gray-800 dark:text-white">
-          Total clientes:
-        </h2>
-        <!--Numeros de clientes-->
-        {#if clientesCancelado}
-          <span
-            class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-          >
-            {clientesCancelado.length}
-            {clientesCancelado.length === 1 ? "cliente" : "clientes"}
-          </span>
-        {:else}
-          <span
-            class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-          >
-            0 clientes</span
-          >
-        {/if}
-      </div>
+    <div class="flex items-center gap-x-3">
+      <h2 class="text-lg font-medium text-gray-800 dark:text-white">
+        Total clientes:
+      </h2>
+      <!-- Número de clientes -->
+      {#if dataClients}
+        <span
+          class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
+        >
+          {dataClients.length}
+          {dataClients.length === 1 ? "cliente" : "clientes"}
+        </span>
+      {:else}
+        <span
+          class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
+          >0 clientes</span
+        >
+      {/if}
     </div>
 
+    <!-- Boton que abre el formulario para crear usuario -->
     <div class="w-full flex justify-end py-12" id="button">
       <button
         on:click={() => (modalForm = true)}
         class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm"
-        onclick="modalHandler(true)">Agregar cliente</button
+        >Agregar cliente</button
       >
     </div>
   </div>
@@ -195,7 +193,7 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
       >
-        <a href="/"> Clientes </a>
+        <a href="/">Clientes</a>
       </button>
 
       <button
@@ -207,7 +205,7 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        Clientes cancelados
+        <a href="clientes-cancelados">Clientes cancelados</a>
       </button>
 
       <button
@@ -231,7 +229,7 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/grupo-tres"> Tianguis </a>
+        Tianguis
       </button>
 
       <a
@@ -457,8 +455,8 @@
                     </td>
                   </tr>
                 {/each}
-              {:else if clientesCancelado.length > 0}
-                {#each clientesCancelado as client}
+              {:else if dataClients}
+                {#each dataClients as client}
                   <tr>
                     <!--Id clientes-->
                     <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
@@ -690,7 +688,6 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={formData.capitalPrestado}
             placeholder="Monto prestamo"
-            on:input={calcularTotal}
           />
         </div>
 
@@ -726,7 +723,7 @@
             type="number"
             id="montoPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-            bind:value={total}
+            bind:value={formData.total}
             placeholder="Monto total"
           />
         </div>
@@ -762,11 +759,11 @@
             </svg>
           </div>
           <input
-            type="date"
+            type="text"
             id="fechaPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
-            placeholder="MM/YY"
+            placeholder="00-00-0000"
           />
         </div>
 
@@ -799,11 +796,11 @@
             </svg>
           </div>
           <input
-            type="date"
+            type="text"
             id="fechaMaximoPago"
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPago}
-            placeholder="MM/YY"
+            placeholder="00-00-0000"
           />
         </div>
 
@@ -855,20 +852,6 @@
             placeholder="BVBA"
           />
         </div>
-
-        <label
-          for="direccion"
-          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-        >
-          Dirección
-        </label>
-        <input
-          placeholder="Calle 7 y 8 Av.44"
-          bind:value={formData.direccion}
-          type="text"
-          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-        />
-
         <div class="flex items-center justify-start w-full">
           <!--Btn guardar datos-->
           <button
@@ -1010,15 +993,14 @@
               type="number"
               id="montoPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              placeholder="Monto prestamo"
-              on:input={calcularTotal}
+              placeholder="Monto total"
             />
           </div>
 
           <label
             for="total"
             class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >Total</label
+            >Capital prestado</label
           >
           <div class="relative mb-5 mt-2">
             <div
@@ -1044,9 +1026,9 @@
               </svg>
             </div>
             <input
-              bind:value={total}
+              bind:value={formData.total}
               type="number"
-              id="Total"
+              id="montoPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
               placeholder="Monto total"
             />
@@ -1087,7 +1069,7 @@
               type="text"
               id="fechaPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="00-00-0000"
+              placeholder="MM/YY"
             />
           </div>
 
@@ -1124,7 +1106,7 @@
               type="text"
               id="fechaMaximoPago"
               class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="00-00-0000"
+              placeholder="MM/YY"
             />
           </div>
 
@@ -1161,19 +1143,6 @@
               placeholder="BVBA"
             />
           </div>
-
-          <label
-            for="direccion"
-            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-          >
-            Dirección
-          </label>
-          <input
-            placeholder="Calle 7 y 8 Av.44"
-            bind:value={formData.direccion}
-            type="text"
-            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          />
 
           <div class="">
             <label
@@ -1316,7 +1285,7 @@
         <div class="flex justify-between px-8 pb-8">
           <div>
             <button
-              on:click={() => deleteClientsCancelados(client._id)}
+              on:click={() => deleteClientsPendientes(client._id)}
               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
               >Si</button
             >
