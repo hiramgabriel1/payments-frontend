@@ -21,11 +21,10 @@
   };
 
   var total;
-    function calcularTotal() {
+  function calcularTotal() {
     const comision = formData.capitalPrestado * 0.15;
-    return total = formData.capitalPrestado + comision;
+    return (total = formData.capitalPrestado + comision);
   }
-
 
   export async function clientesPagos() {
     try {
@@ -46,7 +45,6 @@
 
   const submitDataUser = async () => {
     try {
-     
       const dataNew = {
         /* convertMontoPrestamo: parseInt(formData.montoPrestamo), */
         username: formData.username,
@@ -74,7 +72,7 @@
       );
       modalForm = false;
       console.log(response);
-      window.location.reload()
+      window.location.reload();
       response.ok ? console.log("funciona") : console.log("no funciona lptm");
     } catch (error) {
       console.error(error);
@@ -224,29 +222,27 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/grupo-uno"> Grupo 1 </a>
+        <a href="/grupo-uno"> Armandina </a>
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/grupo-dos"> Grupo 2 </a>
+        <a href="/grupo-dos"> San Juana </a>
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/grupo-tres"> Grupo 3 </a>
+        <a href="/grupo-tres"> Tianguis </a>
       </button>
 
       <a
-      class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      href="/pagos-cercanos"
-    >
-      Pagos cercanos
-    </a>
-
-
+        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/pagos-cercanos"
+      >
+        Pagos cercanos
+      </a>
     </div>
 
     <!--Search-->
@@ -813,18 +809,20 @@
           />
         </div>
 
-         <!-- Modalidad de pago -->
-         <label
-         for="direccion"
-         class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-       >
-         Modalidad de pago
-       </label>
-        <select bind:value={formData.modalityPayment} class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border">
-        <option class="text-base" value="semanal">semanal</option>
-        <option class="text-base" value="quincenal">quincenal</option>
-        </select> 
-
+        <!-- Modalidad de pago -->
+        <label
+          for="direccion"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+        >
+          Modalidad de pago
+        </label>
+        <select
+          bind:value={formData.modalityPayment}
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        >
+          <option class="text-base" value="semanal">semanal</option>
+          <option class="text-base" value="quincenal">quincenal</option>
+        </select>
 
         <!--Nombre del banco-->
         <label
@@ -860,14 +858,17 @@
           />
         </div>
 
-        <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
+        <label
+          for="direccion"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+        >
           Dirección
         </label>
-        <input 
-        placeholder="Calle 7 y 8 Av.44"
-        bind:value={formData.direccion}
-        type="text"
-        class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        <input
+          placeholder="Calle 7 y 8 Av.44"
+          bind:value={formData.direccion}
+          type="text"
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         />
 
         <div class="flex items-center justify-start w-full">
@@ -1162,37 +1163,46 @@
             />
           </div>
 
-          <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
+          <label
+            for="direccion"
+            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >
             Dirección
           </label>
-          <input 
-          placeholder="Calle 7 y 8 Av.44"
-          bind:value={formData.direccion}
-          type="text"
-          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+          <input
+            placeholder="Calle 7 y 8 Av.44"
+            bind:value={formData.direccion}
+            type="text"
+            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           />
 
           <div class="">
-            <label for="pagadoCheckbox" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Pagado</label>
+            <label
+              for="pagadoCheckbox"
+              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+              >Pagado</label
+            >
             <input
-            class="w-10 cursor-pointer"
-            type="checkbox"
-            id="pagadoCheckbox"
-            checked={formData.pagado}
-            on:change={() => formData.pagado = !formData.pagado}
+              class="w-10 cursor-pointer"
+              type="checkbox"
+              id="pagadoCheckbox"
+              checked={formData.pagado}
+              on:change={() => (formData.pagado = !formData.pagado)}
             />
-            
-            
-            <label for="canceladoCheckbox" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Cancelado</label>
+
+            <label
+              for="canceladoCheckbox"
+              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+              >Cancelado</label
+            >
             <input
-            class="w-10 cursor-pointer"
-            type="checkbox"
-            id="canceladoCheckbox"
-            checked={formData.cancelado}
-            on:change={() => formData.cancelado = !formData.cancelado}
+              class="w-10 cursor-pointer"
+              type="checkbox"
+              id="canceladoCheckbox"
+              checked={formData.cancelado}
+              on:change={() => (formData.cancelado = !formData.cancelado)}
             />
           </div>
-
 
           <div class="flex items-center justify-start w-full">
             <!--Btn guardar datos-->
@@ -1266,7 +1276,8 @@
 
         <div class="p-8 z-10">
           <h2 class="text-2xl mb-4">
-            Información del Cliente: {client.username} {client.lastName}
+            Información del Cliente: {client.username}
+            {client.lastName}
           </h2>
           <hr class="mb-4" />
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
@@ -1275,10 +1286,12 @@
           <p class="text-lg mb-2">Total: {client.total}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
-          <p class="text-lg mb-2">Modalidad de pago: {client.modalityPayment}</p>
+          <p class="text-lg mb-2">
+            Modalidad de pago: {client.modalityPayment}
+          </p>
           <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
           <p class="text-lg mb-2">Dirección: {client.direccion}</p>
-          <p class="text-lg mb-2">Pagado: {client.pagado ? 'Si' : 'No'}</p>
+          <p class="text-lg mb-2">Pagado: {client.pagado ? "Si" : "No"}</p>
           <p class="text-lg mb-2">Id del cliente: {client._id}</p>
         </div>
       </div>

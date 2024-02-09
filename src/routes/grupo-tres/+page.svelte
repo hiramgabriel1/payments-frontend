@@ -217,19 +217,19 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/grupo-uno"> Grupo1 </a>
+        <a href="/grupo-uno"> Armandina </a>
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/grupo-dos"> Grupo2 </a>
+        <a href="/grupo-dos"> San Juana </a>
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        Grupo3
+        Tianguis
       </button>
 
       <a

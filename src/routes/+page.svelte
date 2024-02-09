@@ -6,10 +6,9 @@
   let dataClients;
   let loading = true;
 
-
   let formData = {
     username: "",
-    usernametest: 'juanete',
+    usernametest: "juanete",
     lastName: "",
     capitalPrestado: "",
     total: total,
@@ -59,7 +58,7 @@
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
-        modalityPayment: formData.modalityPayment.toLocaleLowerCase()
+        modalityPayment: formData.modalityPayment.toLocaleLowerCase(),
       };
 
       console.log(dataNew);
@@ -229,21 +228,21 @@
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
         href="/grupo-uno"
       >
-        Grupo1
+        Armandina
       </a>
 
       <a
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
         href="/grupo-dos"
       >
-        Grupo2
+        San Juana
       </a>
 
       <a
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
         href="/grupo-tres"
       >
-        Grupo3
+        Tianguis
       </a>
 
       <a
@@ -252,12 +251,9 @@
       >
         Pagos cercanos
       </a>
-
-
     </div>
 
     <!--Search-->
-
 
     <div class="relative flex items-center mt-4 md:mt-0">
       <button on:click={handleSearch} type="submit" class="absolute">
@@ -832,11 +828,13 @@
           Modalidad de pago
         </label>
 
-        <select bind:value={formData.modalityPayment} class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border">
+        <select
+          bind:value={formData.modalityPayment}
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        >
           <option class="text-base" value="semanal">semanal</option>
           <option class="text-base" value="quincenal">quincenal</option>
-        </select> 
- 
+        </select>
 
         <!--Nombre del banco-->
         <label
@@ -1300,7 +1298,9 @@
           <p class="text-lg mb-2">Total: {client.total}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
-          <p class="text-lg mb-2">Modalidad de pago: {client.modalityPayment}</p>
+          <p class="text-lg mb-2">
+            Modalidad de pago: {client.modalityPayment}
+          </p>
           <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
           <p class="text-lg mb-2">Dirección: {client.direccion}</p>
           <p class="text-lg mb-2">Pagado: {client.pagado ? "Si" : "No"}</p>
