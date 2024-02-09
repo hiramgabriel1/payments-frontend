@@ -30,7 +30,7 @@
       const data = await response.json();
       let clientsFourteenDays = data.data.filter(
         (client) =>
-          client.modalityPayment == "quincenal" && client.pagado !== true
+          client.modalityPayment === "quincenal" && client.pagado !== true
       );
       clients = clientsFourteenDays;
       loading = false;
@@ -60,12 +60,12 @@
   }
   getClients();
 
-  function formatDate(date) {
+  /*   function formatDate(date) {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-  }
+  } */
 
   //Función que elimina usuario
   export async function deleteClientsPendientes(idDelete) {
@@ -257,6 +257,12 @@
       >
         <a href="grupo-tres">Grupo 3</a>
       </button>
+      <a
+        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/pagos-cercanos"
+      >
+        Pagos cercanos
+      </a>
     </div>
 
     <!--Search-->
@@ -362,7 +368,7 @@
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
-                  {#if client.paymentMethod === "efectivo"}
+                  {#if client.modalityPayment === "quincenal"}
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"

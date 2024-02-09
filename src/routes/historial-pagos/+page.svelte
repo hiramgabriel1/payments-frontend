@@ -15,6 +15,7 @@
     fechaPago: "",
     paymentMethod: "",
     direccion: "",
+    modalityPayment: "",
     pagado: false,
     cancelado: false,
   };
@@ -56,6 +57,7 @@
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
+        modalityPayment: formData.modalityPayment,
       };
       console.log(dataNew);
       // console.log(typeof dataNew.convertMontoPrestamo);
@@ -236,6 +238,15 @@
       >
         <a href="/grupo-tres"> Grupo 3 </a>
       </button>
+
+      <a
+      class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+      href="/pagos-cercanos"
+    >
+      Pagos cercanos
+    </a>
+
+
     </div>
 
     <!--Search-->
@@ -802,6 +813,19 @@
           />
         </div>
 
+         <!-- Modalidad de pago -->
+         <label
+         for="direccion"
+         class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+       >
+         Modalidad de pago
+       </label>
+        <select bind:value={formData.modalityPayment} class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border">
+        <option class="text-base" value="semanal">semanal</option>
+        <option class="text-base" value="quincenal">quincenal</option>
+        </select> 
+
+
         <!--Nombre del banco-->
         <label
           for="nombreBanco"
@@ -1251,6 +1275,7 @@
           <p class="text-lg mb-2">Total: {client.total}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
+          <p class="text-lg mb-2">Modalidad de pago: {client.modalityPayment}</p>
           <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
           <p class="text-lg mb-2">Dirección: {client.direccion}</p>
           <p class="text-lg mb-2">Pagado: {client.pagado ? 'Si' : 'No'}</p>

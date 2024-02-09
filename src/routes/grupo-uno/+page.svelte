@@ -228,7 +228,16 @@
       >
         <a href="/grupo-tres">Grupo 3</a>
       </button>
+
+      <a
+      class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+      href="/pagos-cercanos"
+    >
+      Pagos cercanos
+    </a>
+
     </div>
+
 
     <!--Search-->
     <div class="relative flex items-center mt-4 md:mt-0">
