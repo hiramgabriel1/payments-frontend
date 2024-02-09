@@ -590,7 +590,7 @@
           <hr class="mb-4" />
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
-          <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
+          <!-- <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p> -->
           <p class="text-lg mb-2">
             Fecha del prestamo: {client.fechaPrestamo}
           </p>
@@ -731,7 +731,7 @@
               for="montoPrestamo"
               class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
             >
-              Pago semanal
+              Pago quincenal
             </label>
             <div class="relative mb-5 mt-2">
               <div

@@ -21,11 +21,10 @@
   };
 
   var total;
-    function calcularTotal() {
+  function calcularTotal() {
     const comision = formData.capitalPrestado * 0.15;
-    return total = formData.capitalPrestado + comision;
+    return (total = formData.capitalPrestado + comision);
   }
-
 
   export async function clientesCancelados() {
     try {
@@ -46,7 +45,6 @@
 
   const submitDataUser = async () => {
     try {
-  
       const dataNew = {
         /* convertMontoPrestamo: parseInt(formData.montoPrestamo), */
         username: formData.username,
@@ -57,7 +55,7 @@
         fechaPago: form.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
-        modalityPayment: formData.modalityPayment
+        modalityPayment: formData.modalityPayment,
       };
       console.log(dataNew);
       // console.log(typeof dataNew.convertMontoPrestamo);
@@ -237,13 +235,11 @@
       </button>
 
       <a
-      class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      href="/pagos-cercanos"
-    >
-      Pagos cercanos
-    </a>
-
-
+        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/pagos-cercanos"
+      >
+        Pagos cercanos
+      </a>
     </div>
 
     <!--Search-->
@@ -811,18 +807,20 @@
           />
         </div>
 
-          <!-- Modalidad de pago -->
-          <label
+        <!-- Modalidad de pago -->
+        <label
           for="direccion"
           class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
         >
           Modalidad de pago
         </label>
-         <select bind:value={formData.modalityPayment} class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border">
-         <option class="text-base" value="semanal">semanal</option>
-         <option class="text-base" value="quincenal">quincenal</option>
-         </select> 
- 
+        <select
+          bind:value={formData.modalityPayment}
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        >
+          <option class="text-base" value="semanal">semanal</option>
+          <option class="text-base" value="quincenal">quincenal</option>
+        </select>
 
         <!--Nombre del banco-->
         <label
@@ -858,15 +856,18 @@
           />
         </div>
 
-          <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
-            Dirección
-          </label>
-          <input 
+        <label
+          for="direccion"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+        >
+          Dirección
+        </label>
+        <input
           placeholder="Calle 7 y 8 Av.44"
           bind:value={formData.direccion}
           type="text"
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          />
+        />
 
         <div class="flex items-center justify-start w-full">
           <!--Btn guardar datos-->
@@ -1161,37 +1162,46 @@
             />
           </div>
 
-          <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
+          <label
+            for="direccion"
+            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >
             Dirección
           </label>
-          <input 
-          placeholder="Calle 7 y 8 Av.44"
-          bind:value={formData.direccion}
-          type="text"
-          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+          <input
+            placeholder="Calle 7 y 8 Av.44"
+            bind:value={formData.direccion}
+            type="text"
+            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           />
 
           <div class="">
-            <label for="pagadoCheckbox" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Pagado</label>
+            <label
+              for="pagadoCheckbox"
+              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+              >Pagado</label
+            >
             <input
-            class="w-10 cursor-pointer"
-            type="checkbox"
-            id="pagadoCheckbox"
-            checked={formData.pagado}
-            on:change={() => formData.pagado = !formData.pagado}
+              class="w-10 cursor-pointer"
+              type="checkbox"
+              id="pagadoCheckbox"
+              checked={formData.pagado}
+              on:change={() => (formData.pagado = !formData.pagado)}
             />
-            
-            
-            <label for="canceladoCheckbox" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Cancelado</label>
+
+            <label
+              for="canceladoCheckbox"
+              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+              >Cancelado</label
+            >
             <input
-            class="w-10 cursor-pointer"
-            type="checkbox"
-            id="canceladoCheckbox"
-            checked={formData.cancelado}
-            on:change={() => formData.cancelado = !formData.cancelado}
+              class="w-10 cursor-pointer"
+              type="checkbox"
+              id="canceladoCheckbox"
+              checked={formData.cancelado}
+              on:change={() => (formData.cancelado = !formData.cancelado)}
             />
           </div>
-
 
           <div class="flex items-center justify-start w-full">
             <!--Btn guardar datos-->
@@ -1208,7 +1218,7 @@
             </button>
           </div>
           <button
-            on:click={() => modalEditar=false}
+            on:click={() => (modalEditar = false)}
             class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600"
             onclick="modalHandler()"
             aria-label="close modal"
@@ -1240,47 +1250,51 @@
 <!-- Modal Detalles del cliente -->
 {#if modalDetail}
   {#each clienteDetail as client}
-  <div class="modal fixed inset-0 flex items-center justify-center bg-gray-100">
-    <div class="modal-overlay absolute w-full h-full"></div>
-  
-    <div class="z-10 bg-white rounded-lg shadow-lg w-2/3 relative">
-      <button
-        on:click={() => (modalDetail = false)}
-        class="close absolute top-0 right-0 mr-4 mt-4 text-gray-700 hover:text-gray-900"
-      >
-        <svg
-          class="h-6 w-6"
-          fill="none"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
+    <div
+      class="modal fixed inset-0 flex items-center justify-center bg-gray-100"
+    >
+      <div class="modal-overlay absolute w-full h-full"></div>
+
+      <div class="z-10 bg-white rounded-lg shadow-lg w-2/3 relative">
+        <button
+          on:click={() => (modalDetail = false)}
+          class="close absolute top-0 right-0 mr-4 mt-4 text-gray-700 hover:text-gray-900"
         >
-          <path d="M6 18L18 6M6 6l12 12"></path>
-        </svg>
-      </button>
-  
-      <div class="p-8 z-10">
-        <h2 class="text-2xl mb-4">
-          Información del Cliente: {client.username} {client.lastName}
-        </h2>
-        <hr class="mb-4" />
-        <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
-        <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
-        <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
-        <p class="text-lg mb-2">Total: {client.total}</p>
-        <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
-        <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
-        <p class="text-lg mb-2">Modalidad de pago: {client.modalityPayment}</p>
-        <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
-        <p class="text-lg mb-2">Dirección: {client.direccion}</p>
-        <p class="text-lg mb-2">Pagado: {client.pagado ? 'Si' : 'No'}</p>
-        <p class="text-lg mb-2">Id del cliente: {client._id}</p>
+          <svg
+            class="h-6 w-6"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+
+        <div class="p-8 z-10">
+          <h2 class="text-2xl mb-4">
+            Información del Cliente: {client.username}
+            {client.lastName}
+          </h2>
+          <hr class="mb-4" />
+          <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
+          <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
+          <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
+          <p class="text-lg mb-2">Total: {client.total}</p>
+          <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
+          <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
+          <p class="text-lg mb-2">
+            Modalidad de pago: {client.modalityPayment}
+          </p>
+          <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
+          <p class="text-lg mb-2">Dirección: {client.direccion}</p>
+          <p class="text-lg mb-2">Pagado: {client.pagado ? "Si" : "No"}</p>
+          <p class="text-lg mb-2">Id del cliente: {client._id}</p>
+        </div>
       </div>
     </div>
-  </div>
-  
   {/each}
 {/if}
 

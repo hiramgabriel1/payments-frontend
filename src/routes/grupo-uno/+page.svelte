@@ -230,14 +230,12 @@
       </button>
 
       <a
-      class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      href="/pagos-cercanos"
-    >
-      Pagos cercanos
-    </a>
-
+        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/pagos-cercanos"
+      >
+        Pagos cercanos
+      </a>
     </div>
-
 
     <!--Search-->
     <div class="relative flex items-center mt-4 md:mt-0">
@@ -357,7 +355,6 @@
                       <td class="px-4 py-8 text-gray-700 text-sm"
                         >{client.total}</td
                       >
-
                       <td d class="px-4 py-8 text-gray-700 text-sm">
                         {client.fechaPrestamo.slice(0, 15)}
                         <br />
@@ -728,6 +725,82 @@
                 min="0"
                 class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
                 placeholder={clientRender.total}
+              />
+            </div>
+
+            <!--Fecha de prestamo-->
+            <label
+              for="fechaPrestamo"
+              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+              >Fecha del prestamo</label
+            >
+            <div class="relative mb-5 mt-2">
+              <div
+                class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-calendar-event"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" />
+                  <rect x="4" y="5" width="16" height="16" rx="2" />
+                  <line x1="16" y1="3" x2="16" y2="7" />
+                  <line x1="8" y1="3" x2="8" y2="7" />
+                  <line x1="4" y1="11" x2="20" y2="11" />
+                  <rect x="8" y="15" width="2" height="2" />
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="fechaPrestamo"
+                class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+                bind:value={formData.fechaPrestamo}
+                placeholder="23-02-24"
+              />
+            </div>
+
+            <!--Fecha maxima de pago-->
+            <label
+              for="fechaMaximoPago"
+              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+              >Fecha maxima de pago</label
+            >
+            <div class="relative mb-5 mt-2">
+              <div
+                class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="icon icon-tabler icon-tabler-info-circle"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  stroke-width="1.5"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z"></path>
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                  <polyline points="11 12 12 12 12 16 13 16"></polyline>
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="fechaMaximoPago"
+                class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+                bind:value={formData.fechaPago}
+                placeholder="10-02-2024"
               />
             </div>
 
