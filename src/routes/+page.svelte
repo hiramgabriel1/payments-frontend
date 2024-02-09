@@ -8,6 +8,7 @@
 
   let formData = {
     username: "",
+    usernametest: 'juanete',
     lastName: "",
     capitalPrestado: "",
     total: total,
@@ -15,6 +16,7 @@
     fechaPago: "",
     paymentMethod: "",
     direccion: "",
+    daysPayment: "",
     pagado: false,
     cancelado: false,
   };
@@ -334,7 +336,7 @@
               <!-- Clientes -->
               {#if loading}
                 <tr>
-                  <td colspan="6">Cargando...</td>
+                  <td colspan="6" class="text-center">Cargando...</td>
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
@@ -944,7 +946,7 @@
             bind:value={formData.username}
             id="username"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            placeholder="James"
+            placeholder={formData.usernametest}
           />
 
           <!--Apellido-->
@@ -1204,7 +1206,6 @@
           <button
             on:click={() => (modalEditar = false)}
             class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600"
-            onclick="modalHandler()"
             aria-label="close modal"
             type="button"
           >

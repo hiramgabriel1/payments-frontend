@@ -16,6 +16,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"json-server": "^1.0.0-alpha.22"
+		"json-server": "^1.0.0-alpha.22",
+		"svelte-french-toast": "^1.2.0"
 	}
 }
