@@ -10,13 +10,21 @@
     username: "",
     lastName: "",
     capitalPrestado: "",
-    total: "",
+    total: total,
     fechaPrestamo: "",
     fechaPago: "",
     paymentMethod: "",
+    direccion: "",
     pagado: false,
     cancelado: false,
   };
+
+  var total;
+    function calcularTotal() {
+    const comision = formData.capitalPrestado * 0.15;
+    return total = formData.capitalPrestado + comision;
+  }
+
 
   export async function clientesPagos() {
     try {
@@ -37,18 +45,17 @@
 
   const submitDataUser = async () => {
     try {
-      let fechaPrestamo = formData.fechaPrestamo;
-      let fechaPago = formData.fechaMaximoPago;
-
+     
       const dataNew = {
         /* convertMontoPrestamo: parseInt(formData.montoPrestamo), */
         username: formData.username,
         lastName: formData.lastName,
         capitalPrestado: formData.capitalPrestado,
         total: formData.total,
-        fechaPrestamo: new Date(fechaPrestamo),
-        fechaPago: new Date(fechaPago),
+        fechaPrestamo: formData.fechaPrestamo,
+        fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
+        direccion: formData.direccion,
       };
       console.log(dataNew);
       // console.log(typeof dataNew.convertMontoPrestamo);
@@ -215,13 +222,19 @@
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/pagos-siete-dias"> Cada 7 dias </a>
+        <a href="/grupo-uno"> Grupo 1 </a>
       </button>
 
       <button
         class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
       >
-        <a href="/pagos-catorce-dias"> Cada 14 dias </a>
+        <a href="/grupo-dos"> Grupo 2 </a>
+      </button>
+
+      <button
+        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+      >
+        <a href="/grupo-tres"> Grupo 3 </a>
       </button>
     </div>
 
@@ -672,6 +685,7 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={formData.capitalPrestado}
             placeholder="Monto prestamo"
+            on:input={calcularTotal}
           />
         </div>
 
@@ -707,7 +721,7 @@
             type="number"
             id="montoPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-            bind:value={formData.total}
+            bind:value={total}
             placeholder="Monto total"
           />
         </div>
@@ -743,11 +757,11 @@
             </svg>
           </div>
           <input
-            type="date"
+            type="text"
             id="fechaPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
-            placeholder="MM/YY"
+            placeholder="00-00-0000"
           />
         </div>
 
@@ -780,11 +794,11 @@
             </svg>
           </div>
           <input
-            type="date"
+            type="text"
             id="fechaMaximoPago"
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPago}
-            placeholder="MM/YY"
+            placeholder="00-00-0000"
           />
         </div>
 
@@ -821,6 +835,17 @@
             placeholder="BVBA"
           />
         </div>
+
+        <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
+          Dirección
+        </label>
+        <input 
+        placeholder="Calle 7 y 8 Av.44"
+        bind:value={formData.direccion}
+        type="text"
+        class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        />
+
         <div class="flex items-center justify-start w-full">
           <!--Btn guardar datos-->
           <button
@@ -962,14 +987,14 @@
               type="number"
               id="montoPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              placeholder="Monto total"
+              placeholder="Monto prestamo"
             />
           </div>
 
           <label
             for="total"
             class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >Capital prestado</label
+            >Total</label
           >
           <div class="relative mb-5 mt-2">
             <div
@@ -1113,6 +1138,16 @@
             />
           </div>
 
+          <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
+            Dirección
+          </label>
+          <input 
+          placeholder="Calle 7 y 8 Av.44"
+          bind:value={formData.direccion}
+          type="text"
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+          />
+
           <div class="">
             <label for="pagadoCheckbox" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Pagado</label>
             <input
@@ -1217,6 +1252,7 @@
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
           <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
+          <p class="text-lg mb-2">Dirección: {client.direccion}</p>
           <p class="text-lg mb-2">Pagado: {client.pagado ? 'Si' : 'No'}</p>
           <p class="text-lg mb-2">Id del cliente: {client._id}</p>
         </div>

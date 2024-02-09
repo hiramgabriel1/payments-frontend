@@ -9,9 +9,10 @@
   async function getClients() {
     try {
       const response = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
+
       const data = await response.json();
-      let clientsFourteenDays = data.data.filter(client => client.paymentMethod === 'efectivo')
-      clients = clientsFourteenDays;
+      let clientsSevenDays = data.data.filter(client => client.paymentMethod !== 'efectivo')
+      clients = clientsSevenDays;
       loading = false;
       console.log(clients);
     } catch (error) {
@@ -19,33 +20,17 @@
     }
   }
 
-  function calcularFechasDePago(client) {
-    const { fechaPrestamo, fechaPago } = client;
 
-    let fechaInicioPago = new Date(fechaPrestamo);
-    const fechaFinalPago = new Date(fechaPago);
 
-    let fechaInicioPrestamo = new Date(fechaInicioPago);
-    fechaInicioPrestamo.setDate(fechaInicioPrestamo.getDate() + 14);
 
-    const fechasDePago = [];
-
-    while (fechaInicioPrestamo < fechaFinalPago) {
-      fechasDePago.push(new Date(fechaInicioPrestamo));
-      fechaInicioPrestamo.setDate(fechaInicioPrestamo.getDate() + 14);
-    }
-    console.log(fechasDePago)
-    return fechasDePago;
-  }
   getClients();
 
-  function formatDate(date) {
+  /* function formatDate(date) {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-  }
-
+  } */
   //Función que elimina usuario
   export async function deleteClientsPendientes(idDelete){
     const response = await fetch(`https://payments-api-jpt5.onrender.com/api/v1/delete-user/${idDelete}`,{
@@ -75,7 +60,6 @@
     console.log(searchResults)
   };
 
-//Eliminar usuario
   let clienteDetail = [];
   const mostrarModalDetail = (client) => {
   let clienteDetailArray = [client]
@@ -83,7 +67,6 @@
   modalDetail = true
 }
 
-//Actualizar usuario
   let clienteDelete
   const mostrarModalDelete = (client) =>{
   let clienteDeleteArray = [client]
@@ -91,6 +74,7 @@
   modalDelete = true
 }
 
+ 
 </script>
 
 <section class="container mt-24 px-4 mx-auto">
@@ -112,11 +96,6 @@
           >
         {/if}
       </div>
-    </div>
-
-    <div class="flex items-center mt-4 gap-x-3">
-      <!--Modal creacion de nuevos usuarios-->
-
     </div>
   </div>
 
@@ -140,11 +119,15 @@
       </button>
 
       <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        <a href="pagos-siete-dias">Cada 7 dias</a>
+        Grupo 1
       </button>
 
       <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Cada 14 dias
+        <a href="/grupo-dos">Grupo 2</a>
+      </button>
+
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        <a href="/grupo-tres">Grupo 3</a>
       </button>
     </div>
 
@@ -252,17 +235,20 @@
             {:else}
               {#if searchResults.length > 0}
                 {#each searchResults as client}
-                  {#if client.paymentMethod === "efectivo"}
+                  {#if client.paymentMethod !== "efectivo"}
                     <tr>
                       <td class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white ">{client._id}</td>
                       <td class="px-12 py-8 text-gray-700 text-sm">{client.username}</td>
                       <td class="px-4 py-8 text-gray-700 text-sm">{client.lastName}</td>
                       <td class="px-4 py-8 text-gray-700 text-sm">{client.total}</td>
-                      <td class="px-4 py-8 text-gray-700 text-sm">
-                       {client.fechaPrestamo.slice(0, 10)}
-                       <br>
-                       {client.fechaPago.slice(0, 10)}
+                      
+                      <td d class="px-4 py-8 text-gray-700 text-sm">
+                      {client.fechaPrestamo.slice(0, 15)}
+                      <br>
+                      {client.fechaPago.slice(0, 15)}
                       </td>
+                                    
+                    
                       <td class="px-4 py-2">    
                         <!-- Boton de ver detalles del cliente -->
                         <button on:click={() => mostrarModalDetail(client)} class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center">
@@ -289,7 +275,7 @@
                 {/each}
               {:else if clients.length > 0}
                 {#each clients as client}
-                  {#if client.paymentMethod === "efectivo"}
+                  {#if client.paymentMethod !== "efectivo"}
                     <tr>
                       <td class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white ">{client._id}</td>
                       <td class="px-12 py-8 text-gray-700 text-sm">{client.username}</td>
@@ -300,6 +286,7 @@
                         <br>
                         {client.fechaPago.slice(0, 15)}
                       </td>
+                      
                       <td class="px-4 py-2">    
                         <!-- Boton de ver detalles del cliente -->
                         <button on:click={() => mostrarModalDetail(client)} class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center">
@@ -330,6 +317,7 @@
                 </tr>
               {/if}
             {/if}
+            
             </tbody>
           </table>
         </div>
@@ -338,7 +326,7 @@
   </div>
 </section>
 
-<!-- Modal Detalles del cliente -->
+  <!-- Modal Detalles del cliente -->
 {#if modalDetail}
 {#each clienteDetail as client}
 <div class="modal fixed inset-0 flex items-center justify-center bg-gray-100">
@@ -371,12 +359,13 @@
       <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
       <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
       <p class="text-lg mb-2">
-        Fecha del prestamo: {client.fechaPrestamo}
+        Fecha del prestamo: {client.fechaPrestamo.slice(0, 10)}
       </p>
       <p class="text-lg mb-2">
-        Fecha limite de pago: {client.fechaPago}
+        Fecha limite de pago: {client.fechaPago.slice(0, 10)}
       </p>
       <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
+      <p class="text-lg mb-2">Dirección: {client.direccion}</p>
       <p class="text-lg mb-2">Total: {client.total}</p>
       <p class="text-lg mb-2">Pagado: {client.pagado}</p>
       <p class="text-lg mb-2">ID: {client._id}</p>
@@ -387,7 +376,7 @@
   {/each}
   {/if}
 
-<!-- Modal Eliminar cliente -->
+  <!-- Modal Eliminar cliente -->
   {#if modalDelete}
   {#each clienteDelete as client}
   <div class="modal fixed inset-0 flex items-center justify-center bg-gray-100">

@@ -1,4 +1,3 @@
-
 <script>
     let modalForm;
     let modalEditar;
@@ -11,20 +10,15 @@
       username: "",
       lastName: "",
       capitalPrestado: "",
-      total: total,
+      total: "",
       fechaPrestamo: "",
       fechaPago: "",
       paymentMethod: "",
-      direccion: "",
       pagado: false,
       cancelado: false,
     };
-
-   var total;
-    function calcularTotal() {
-    const comision = formData.capitalPrestado * 0.15;
-    return total = formData.capitalPrestado + comision;
-  }
+   console.log(formData.pagado)
+   console.log(formData.cancelado)
 
     async function getClients() {
         try {
@@ -43,22 +37,25 @@
     //Funcion que crea un nuevo usuario
     const submitDataUser = async () => {
       try {
+       /*  let fechaPrestamo = formData.fechaPrestamo;
+        let fechaPago = formData.fechaMaximoPago; */
+  
         const dataNew = {
           username: formData.username,
           lastName: formData.lastName,
           capitalPrestado: formData.capitalPrestado,
-          total: total,
+          total: formData.total,
           fechaPrestamo: formData.fechaPrestamo,
           fechaPago: formData.fechaPago,
           paymentMethod: formData.paymentMethod,
-          direccion: formData.direccion
       };
   
         console.log(dataNew);
         // console.log(typeof dataNew.convertMontoPrestamo);
   
 
-        const response = await fetch("https://payments-api-jpt5.onrender.com/api/v1/create-user",
+        const response = await fetch(
+          "https://payments-api-jpt5.onrender.com/api/v1/create-user",
           {
             method: "POST",
             headers: {
@@ -68,7 +65,7 @@
           }
         );
         modalForm = false;
-       /*  window.location.reload(); */
+        window.location.reload();
         console.log(response);
         response.ok ? console.log("funciona") : console.log("no funciona lptm");
       } catch (error) {
@@ -152,9 +149,6 @@
       modalEditar = true;
       idUser = client._id;
     };
-
-    
-
   </script>
   
   <!-- modal -->
@@ -189,7 +183,7 @@
       <!--Grupos-->
       <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
         <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300">
-          Clientes 
+          <a href="/">Clientes</a>
         </button>
   
         <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
@@ -213,7 +207,7 @@
         </button>
 
         <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-          <a href="/grupo-tres"> Grupo3 </a>
+          Grupo3 
         </button>
       </div>
   
@@ -661,12 +655,11 @@
               </svg>
             </div>
             <input
-              type="number"
+              type="text"
               id="montoPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
               bind:value={formData.capitalPrestado}
               placeholder="Monto prestamo"
-              on:input={calcularTotal}
             />
           </div>
   
@@ -702,9 +695,8 @@
               type="number"
               id="montoPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              bind:value={total}
+              bind:value={formData.total}
               placeholder="Monto total"
-              readonly
             />
           </div>
   
@@ -817,17 +809,6 @@
               placeholder="BVBA"
             />
           </div>
-
-          <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
-            Dirección
-          </label>
-          <input 
-          placeholder="Calle 7 y 8 Av.44"
-          bind:value={formData.direccion}
-          type="text"
-          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          />
-
           <div class="flex items-center justify-start w-full">
             <!--Btn guardar datos-->
             <button
@@ -969,15 +950,14 @@
                 type="number"
                 id="montoPrestamo"
                 class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-                placeholder="Monto prestamo"
-                on:input={calcularTotal}
+                placeholder="Monto total"
               />
             </div>
   
             <label
               for="total"
               class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >Total</label
+              >Capital prestado</label
             >
             <div class="relative mb-5 mt-2">
               <div
@@ -1003,7 +983,7 @@
                 </svg>
               </div>
               <input
-                bind:value={total}
+                bind:value={formData.total}
                 type="number"
                 id="montoPrestamo"
                 class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
@@ -1120,16 +1100,6 @@
                 placeholder="BVBA"
               />
             </div>
-
-            <label for="direccion" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">
-              Dirección
-            </label>
-            <input 
-            placeholder="Calle 7 y 8 Av.44"
-            bind:value={formData.direccion}
-            type="text"
-            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            />
 
             <div class="">
               <label for="pagadoCheckbox" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Pagado</label>
@@ -1301,4 +1271,3 @@
       background-color: rgba(0, 0, 0, 0.2);
     }
   </style>
-  
