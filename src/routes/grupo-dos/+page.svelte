@@ -10,7 +10,7 @@
     try {
       const response = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
       const data = await response.json();
-      let clientsFourteenDays = data.data.filter(client => client.paymentMethod === 'efectivo')
+      let clientsFourteenDays = data.data.filter(client => client.modalityPayment === 'quincenal')
       clients = clientsFourteenDays;
       loading = false;
       console.log(clients);
@@ -39,12 +39,12 @@
   }
   getClients();
 
-  function formatDate(date) {
+/*   function formatDate(date) {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
-  }
+  } */
 
   //Función que elimina usuario
   export async function deleteClientsPendientes(idDelete){
@@ -150,6 +150,13 @@
       <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         <a href="grupo-tres">Grupo 3</a>
       </button>
+
+      <a
+      class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+      href="/pagos-cercanos"
+    >
+      Pagos cercanos
+    </a>
 
     </div>
 
@@ -257,7 +264,7 @@
             {:else}
               {#if searchResults.length > 0}
                 {#each searchResults as client}
-                  {#if client.paymentMethod === "efectivo"}
+                  {#if client.modalityPayment === "quincenal"}
                     <tr>
                       <td class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white ">{client._id}</td>
                       <td class="px-12 py-8 text-gray-700 text-sm">{client.username}</td>
@@ -294,7 +301,7 @@
                 {/each}
               {:else if clients.length > 0}
                 {#each clients as client}
-                  {#if client.paymentMethod === "efectivo"}
+                  {#if client.modalityPayment === "quincenal"}
                     <tr>
                       <td class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white ">{client._id}</td>
                       <td class="px-12 py-8 text-gray-700 text-sm">{client.username}</td>
@@ -375,16 +382,13 @@
       <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
       <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
       <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
-      <p class="text-lg mb-2">
-        Fecha del prestamo: {client.fechaPrestamo}
-      </p>
-      <p class="text-lg mb-2">
-        Fecha limite de pago: {client.fechaPago}
-      </p>
+      <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
+      <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
+      <p class="text-lg mb-2">Modalidad de pago: {client.modalityPayment}</p>
       <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
       <p class="text-lg mb-2">Dirección: {client.direccion}</p>
       <p class="text-lg mb-2">Total: {client.total}</p>
-      <p class="text-lg mb-2">Pagado: {client.pagado}</p>
+      <p class="text-lg mb-2">Pagado: {client.pagado ? "Si" : "No"}</p>
       <p class="text-lg mb-2">ID: {client._id}</p>
     </div>
   </div>
