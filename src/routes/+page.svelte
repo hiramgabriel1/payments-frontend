@@ -8,7 +8,21 @@
 
   let formData = {
     username: "",
-    usernametest: "juanete",
+    lastName: "",
+    capitalPrestado: "",
+    total: total,
+    fechaPrestamo: "",
+    fechaPago: "",
+    paymentMethod: "",
+    direccion: "",
+    modalityPayment: "".toLocaleLowerCase(),
+    daysPayment: "",
+    pagado: false,
+    cancelado: false,
+  };
+
+  let formDataEdit = {
+    username: "",
     lastName: "",
     capitalPrestado: "",
     total: total,
@@ -75,7 +89,7 @@
         }
       );
       modalForm = false;
-      window.location.reload(); 
+      window.location.reload();
       console.log(response);
       response.ok ? console.log("funciona") : console.log("no funciona lptm");
     } catch (error) {
@@ -146,7 +160,7 @@
     modalDetail = true;
   };
 
-  //Eliminar usuario
+  // Eliminar usuario
   let clienteDelete;
   const mostrarModalDelete = (client) => {
     let clienteDeleteArray = [client];
@@ -158,6 +172,8 @@
   const newData = (client) => {
     modalEditar = true;
     idUser = client._id;
+
+    console.log(idUser);
   };
 </script>
 
@@ -1188,8 +1204,6 @@
             type="text"
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           />
-         
-          
 
           <div class="">
             <label

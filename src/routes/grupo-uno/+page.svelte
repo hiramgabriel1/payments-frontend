@@ -78,7 +78,6 @@
       if (formData.capitalPrestado > formData.total) {
         toast.error("Error");
 
-        // console.log("re pelotuod pelotudo");
         return;
       } else {
         formData.total =
@@ -108,7 +107,7 @@
         toast.success("Usuario editado");
 
         modalEditar = false;
-        // window.location.reload();
+        window.location.reload();
       }
     } catch (error) {
       console.log(error);
