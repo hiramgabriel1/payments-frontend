@@ -79,6 +79,13 @@
     }
   };
 
+  //Actualizar usuario
+  const newData = (client) => {
+  idUser = client._id;
+  formData = {...client}
+  modalEditar = true;
+  };
+
   let patchUser;
   let idUser;
   async function actualizarUser() {
@@ -146,10 +153,6 @@
     modalDelete = true;
   };
 
-  const newData = (client) => {
-    modalEditar = true;
-    idUser = client._id;
-  };
 </script>
 
 <!-- modal -->
@@ -178,13 +181,13 @@
       </div>
     </div>
 
-    <!-- <div class="w-full flex justify-end py-12" id="button">
+    <div class="w-full flex justify-end py-12" id="button">
       <button
         on:click={() => (modalForm = true)}
         class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm"
         onclick="modalHandler(true)">Agregar cliente</button
       >
-    </div> -->
+    </div>
   </div>
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
@@ -1044,7 +1047,7 @@
               </svg>
             </div>
             <input
-              bind:value={total}
+              bind:value={formData.total}
               type="number"
               id="Total"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"

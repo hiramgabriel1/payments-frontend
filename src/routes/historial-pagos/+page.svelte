@@ -79,6 +79,13 @@
     }
   };
 
+  //Actualizar usuario
+  const newData = (client) => {
+  idUser = client._id;
+  formData = {...client}
+  modalEditar = true;
+  };
+
   // Función actualizar usuario
   let patchUser;
   let idUser;
@@ -148,11 +155,7 @@
     clienteDelete = clienteDeleteArray;
     modalDelete = true;
   };
-  //Actualizar usuario
-  const newData = (client) => {
-    modalEditar = true;
-    idUser = client._id;
-  };
+
 </script>
 
 <!-- modal -->
@@ -687,7 +690,7 @@
             </svg>
           </div>
           <input
-            type="text"
+            type="number"
             id="montoPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={formData.capitalPrestado}
@@ -730,6 +733,7 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={total}
             placeholder="Monto total"
+            readonly
           />
         </div>
 
@@ -816,6 +820,7 @@
         >
           Modalidad de pago
         </label>
+
         <select
           bind:value={formData.modalityPayment}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
@@ -913,6 +918,7 @@
     </form>
   </div>
 {/if}
+
 
 <!-- Modal Actualizar cliente -->
 {#if modalEditar}

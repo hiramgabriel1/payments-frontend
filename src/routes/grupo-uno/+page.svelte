@@ -70,6 +70,13 @@
     }
   };
 
+  //Actualizar usuario
+  const newData = (client) => {
+  idUser = client._id;
+  formData = {...client}
+  modalEditar = true;
+  };
+
   // todo: editar usuario
   let patchUser;
   let idUser;
@@ -117,9 +124,9 @@
   // todo: modificar pagos de usuario
   const addPayments = (client) => {
     idUser = client._id;
+    formData = {...client}
     let clientArrayInfo = [client];
     showDataPaymentToEdit = clientArrayInfo;
-
     console.log(showDataPaymentToEdit);
     modalEditar = true;
   };
@@ -633,7 +640,7 @@
               >Nombre</label
             >
             <input
-              bind:value={clientRender.username}
+              bind:value={formData.username}
               id="username"
               class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
               placeholder={clientRender.username}
