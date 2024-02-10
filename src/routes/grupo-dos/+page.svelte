@@ -71,6 +71,8 @@
     );
     const deletedClient = await response.json();
     console.log("cliente eliminado con exito " + deletedClient);
+
+    window.location.reload();
     modalDelete = false;
   }
 

@@ -55,6 +55,9 @@
     );
     const deletedClient = await response.json();
     console.log("cliente eliminado con exito " + deletedClient);
+
+    window.location.reload();
+
     modalDelete = false;
   }
 
@@ -75,7 +78,7 @@
       if (formData.capitalPrestado > formData.total) {
         toast.error("Error");
 
-        console.log("re pelotuod pelotudo");
+        // console.log("re pelotuod pelotudo");
         return;
       } else {
         formData.total =
@@ -105,7 +108,7 @@
         toast.success("Usuario editado");
 
         modalEditar = false;
-        window.location.reload();
+        // window.location.reload();
       }
     } catch (error) {
       console.log(error);
@@ -631,7 +634,7 @@
               >Nombre</label
             >
             <input
-              bind:value={formData.username}
+              bind:value={clientRender.username}
               id="username"
               class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
               placeholder={clientRender.username}
