@@ -79,6 +79,13 @@
     }
   };
 
+  //Actualizar usuario
+  const newData = (client) => {
+  idUser = client._id;
+  formData = {...client}
+  modalEditar = true;
+  };
+
   let patchUser;
   let idUser;
   async function actualizarUser() {
@@ -146,10 +153,6 @@
     modalDelete = true;
   };
 
-  const newData = (client) => {
-    modalEditar = true;
-    idUser = client._id;
-  };
 </script>
 
 <!-- modal -->
@@ -1044,7 +1047,7 @@
               </svg>
             </div>
             <input
-              bind:value={total}
+              bind:value={formData.total}
               type="number"
               id="Total"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"

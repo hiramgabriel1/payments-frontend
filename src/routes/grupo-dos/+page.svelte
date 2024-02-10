@@ -85,6 +85,7 @@
     }
   };
 
+
   // todo: editar usuario
   let patchUser;
   let idUser;
@@ -93,7 +94,7 @@
       if (formData.capitalPrestado > formData.total) {
         toast.error("Error");
 
-        console.log("re pelotuod pelotudo");
+        console.log("Error");
         return;
       } else {
         formData.total =
@@ -133,6 +134,7 @@
   // todo: modificar pagos de usuario
   const addPayments = (client) => {
     idUser = client._id;
+    formData = {...client}
     let clientArrayInfo = [client];
     showDataPaymentToEdit = clientArrayInfo;
 

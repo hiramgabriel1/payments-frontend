@@ -21,22 +21,6 @@
     cancelado: false,
   };
 
-  let formDataEdit = {
-    username: "",
-    lastName: "",
-    capitalPrestado: "",
-    total: total,
-    fechaPrestamo: "",
-    fechaPago: "",
-    paymentMethod: "",
-    direccion: "",
-    modalityPayment: "".toLocaleLowerCase(),
-    daysPayment: "",
-    pagado: false,
-    cancelado: false,
-  };
-
-  console.log(formData.modalityPayment);
 
   var total;
   function calcularTotal() {
@@ -97,6 +81,12 @@
     }
   };
 
+  //Actualizar usuario
+  const newData = (client) => {
+  idUser = client._id;
+  formData = {...client}
+  modalEditar = true;
+  };
   //Función que Actualiza un cliente
   let patchUser;
   let idUser;
@@ -168,13 +158,7 @@
     modalDelete = true;
   };
 
-  //Actualizar usuario
-  const newData = (client) => {
-    modalEditar = true;
-    idUser = client._id;
 
-    console.log(idUser);
-  };
 </script>
 
 <!-- modal -->
@@ -990,7 +974,7 @@
             bind:value={formData.username}
             id="username"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            placeholder={formData.usernametest}
+            placeholder='James'
           />
 
           <!--Apellido-->
@@ -1074,7 +1058,7 @@
               </svg>
             </div>
             <input
-              bind:value={total}
+              bind:value={formData.total}
               type="number"
               id="montoPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
