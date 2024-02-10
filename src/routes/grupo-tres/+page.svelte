@@ -74,6 +74,13 @@
     }
   };
 
+  //Actualizar usuario
+  const newData = (client) => {
+  idUser = client._id;
+  formData = {...client}
+  modalEditar = true;
+  };
+
   //Función que Actualiza un cliente
   let patchUser;
   let idUser;
@@ -145,11 +152,6 @@
     modalDelete = true;
   };
 
-  //Actualizar usuario
-  const newData = (client) => {
-    modalEditar = true;
-    idUser = client._id;
-  };
 </script>
 
 <!-- modal -->

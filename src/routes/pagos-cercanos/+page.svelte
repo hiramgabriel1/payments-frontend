@@ -100,6 +100,13 @@
     }
   };
 
+  //Actualizar usuario
+  const newData = (client) => {
+  idUser = client._id;
+  formData = {...client}
+  modalEditar = true;
+  };
+
   //Función que Actualiza un cliente
   let patchUser;
   let idUser;
@@ -171,11 +178,6 @@
     modalDelete = true;
   };
 
-  //Actualizar usuario
-  const newData = (client) => {
-    modalEditar = true;
-    idUser = client._id;
-  };
 </script>
 
 <!-- modal -->
@@ -746,7 +748,7 @@
               </svg>
             </div>
             <input
-              bind:value={total}
+              bind:value={formData.total}
               type="number"
               id="montoPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
