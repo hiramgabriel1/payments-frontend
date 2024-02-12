@@ -581,7 +581,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos de clientes</td>
+                  <td colspan="6" class="text-center">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>

@@ -307,7 +307,7 @@
               <!-- Clientes -->
               {#if loading}
                 <tr>
-                  <td colspan="6">Cargando...</td>
+                  <td colspan="6" class="text-center">Cargando...</td>
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
@@ -549,7 +549,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos de clientes</td>
+                  <td colspan="6" class="text-center">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>
