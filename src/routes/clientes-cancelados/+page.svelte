@@ -33,7 +33,7 @@
       );
       let data = await clients.json();
       let clientesFiltrados = data.data.filter(
-        (client) => client.cancelado === true
+        (client) => client.cancelado === true && client.modalityPayment !== 'quincenal'
       );
       clientesCancelado = clientesFiltrados;
       loading = false;
@@ -46,7 +46,6 @@
   const submitDataUser = async () => {
     try {
       const dataNew = {
-        /* convertMontoPrestamo: parseInt(formData.montoPrestamo), */
         username: formData.username,
         lastName: formData.lastName,
         capitalPrestado: formData.capitalPrestado,
@@ -57,8 +56,6 @@
         direccion: formData.direccion,
         modalityPayment: formData.modalityPayment,
       };
-      console.log(dataNew);
-      // console.log(typeof dataNew.convertMontoPrestamo);
 
       const response = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/create-user",
@@ -136,7 +133,6 @@
     searchResults = clientesCancelado.filter((client) => {
       return client.username.toLowerCase().includes(searchTerm);
     });
-    console.log(searchResults);
   };
 
   let clienteDetail = [];
@@ -156,7 +152,7 @@
 </script>
 
 <!-- modal -->
-<section class="container px-4 mx-auto">
+<section class="container px-4 mt-24 mx-auto">
   <div class="sm:flex sm:items-center sm:justify-between">
     <div>
       <div class="flex items-center gap-x-3">
@@ -180,67 +176,39 @@
         {/if}
       </div>
     </div>
-
-    <!-- <div class="w-full flex justify-end py-12" id="button">
-      <button
-        on:click={() => (modalForm = true)}
-        class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm"
-        onclick="modalHandler(true)">Agregar cliente</button
-      >
-    </div> -->
   </div>
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
-    <div
-      class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
-    >
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
-      >
-        <a href="/"> Clientes </a>
-      </button>
+    <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+      
+      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"> Clientes </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/pagos-pendientes"> Pagos pendientes </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
+      <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Pagos pendientes 
+      </a>
+     
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Clientes cancelados
       </button>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/historial-pagos"> Historial de pagos </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-uno"> Armandina </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-dos"> San Juana </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-tres"> Tianguis </a>
-      </button>
-
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/pagos-cercanos"
-      >
+      <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Historial de pagos 
+      </a>
+  
+      <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Armandina
+      </a>
+    
+      <a href="/grupo-dos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        San Juana
+      </a>
+ 
+      <a href="/grupo-tres" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Tianguis 
+      </a>
+  
+      <a href="/pagos-cercanos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </a>
     </div>
@@ -581,7 +549,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos</td>
+                  <td colspan="6">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>
