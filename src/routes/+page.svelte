@@ -59,9 +59,6 @@
         modalityPayment: formData.modalityPayment.toLocaleLowerCase(),
       };
 
-      console.log(dataNew);
-      // console.log(typeof dataNew.convertMontoPrestamo);
-
       const response = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/create-user",
         {
@@ -74,7 +71,6 @@
       );
       modalForm = false;
       window.location.reload();
-      console.log(response);
       response.ok ? console.log("funciona") : console.log("no funciona lptm");
     } catch (error) {
       console.error(error);
@@ -139,7 +135,6 @@
     searchResults = dataClients.filter((client) => {
       return client.username.toLowerCase().includes(searchTerm);
     });
-    console.log(searchResults);
   };
 
   //Detalles del cliente
@@ -196,12 +191,8 @@
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
-    <div
-      class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
-    >
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
-      >
+    <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300">
         Clientes
       </button>
 
@@ -590,7 +581,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos</td>
+                  <td colspan="6">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>
@@ -832,8 +823,8 @@
           bind:value={formData.modalityPayment}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
-          <option class="text-base" value="semanal">semanal</option>
-          <option class="text-base" value="quincenal">quincenal</option>
+          <option class="text-base" value="quincenal">Armandina</option>
+          <option class="text-base" value="semanal">San juana</option>
         </select>
 
         <!--Nombre del banco-->

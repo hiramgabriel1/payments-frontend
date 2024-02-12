@@ -28,10 +28,8 @@
         "https://payments-api-jpt5.onrender.com/api/v1/"
       );
       const data = await response.json();
-      let clientsFourteenDays = data.data.filter(
-        (client) =>
-          client.modalityPayment === "quincenal" && client.pagado !== true
-      );
+      let clientsFourteenDays = data.data.filter((client) =>
+        client.modalityPayment === "semanal");
       clients = clientsFourteenDays;
       loading = false;
       console.log(clients);
@@ -110,8 +108,7 @@
         }
 
         console.log(total);
-        patchUser = await fetch(
-          `https://payments-api-jpt5.onrender.com/api/v1/edit-user/${idUser}`,
+        patchUser = await fetch(`https://payments-api-jpt5.onrender.com/api/v1/edit-user/${idUser}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -120,9 +117,7 @@
         );
         const clientActualizado = await patchUser.json();
         console.log(clientActualizado);
-
         toast.success("Usuario editado");
-
         modalEditar = false;
         window.location.reload();
       }
@@ -157,7 +152,6 @@
     searchResults = clients.filter((client) => {
       return client.username.toLowerCase().includes(searchTerm);
     });
-    console.log(searchResults);
   };
 
   //Eliminar usuario
@@ -210,56 +204,40 @@
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
-    <div
-      class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
-    >
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
-      >
-        <a href="/">Clientes</a>
-      </button>
+    <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+     
+      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes
+      </a>
+  
+      <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Pagos pendientes
+      </a>
+  
+      <a href="/clientes-cancelados" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes cancelados
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/pagos-pendientes">Pagos pendientes</a>
-      </button>
+      <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Historial de pagos
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/clientes-cancelados">Clientes cancelados</a>
-      </button>
+      <a href="grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Armandina
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/historial-pagos">Historial de pagos</a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="grupo-uno">Armandina</a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         San Juana
       </button>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="grupo-tres">Tianguis</a>
-      </button>
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/pagos-cercanos"
-      >
+      <a href="grupo-tres" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Tianguis
+      </a>
+  
+      <a href="/pagos-cercanos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </a>
+
     </div>
 
     <!--Search-->
@@ -341,7 +319,7 @@
                 <th
                   scope="col"
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >Dias de pago</th
+                  >Fecha prestamos <br> Fecha limite prestamo</th
                 >
                 <!--Barra porcentae de pago-->
                 <th
@@ -365,7 +343,7 @@
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
-                  {#if client.modalityPayment === "quincenal"}
+                  {#if client.modalityPayment === "semanal"}
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
@@ -442,7 +420,7 @@
                 {/each}
               {:else if clients.length > 0}
                 {#each clients as client}
-                  {#if client.modalityPayment === "quincenal"}
+                  {#if client.modalityPayment === "semanal"}
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
@@ -543,7 +521,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos</td>
+                  <td colspan="6">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>
