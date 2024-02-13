@@ -31,10 +31,16 @@
       let clientsFourteenDays = data.data.filter((client) =>
         client.modalityPayment === "semanal");
       clients = clientsFourteenDays;
+      sumarTotales(clients)
       loading = false;
-      console.log(clients);
     } catch (error) {
       console.error("Error al obtener los clientes:", error);
+    }
+  }
+  let sumarTotalClients = 0;
+  function sumarTotales(clients) {
+    for(const client of clients) {
+      sumarTotalClients += client.total || 0
     }
   }
 
@@ -328,7 +334,7 @@
                   >Opciones</th
                 >
                 <th scope="col" class="relative py-3.5 px-4">
-                  <span class="sr-only">Edit</span>
+                 Suma total: {sumarTotalClients}
                 </th>
               </tr>
             </thead>

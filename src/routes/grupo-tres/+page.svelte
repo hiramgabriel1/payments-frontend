@@ -25,13 +25,19 @@
       );
       let data = await clients.json();
       dataClients = data.data;
+      sumarTotales(dataClients)
       loading = false;
     } catch (error) {
       console.log(error);
     }
   }
-
   getClients();
+  let sumarTotalClients = 0;
+  function sumarTotales(clients) {
+    for(const client of clients) {
+      sumarTotalClients += client.total || 0
+    }
+  } 
 
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
@@ -296,7 +302,7 @@
                   >Opciones</th
                 >
                 <th scope="col" class="relative py-3.5 px-4">
-                  <span class="sr-only">Edit</span>
+                  Suma total: {sumarTotalClients}
                 </th>
               </tr>
             </thead>
