@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from "svelte";
+
   let modalForm;
   let modalEditar;
   let modalDetail;
@@ -41,7 +43,10 @@
     }
   }
 
-  getClients();
+  onMount(()=> {
+    return getClients();
+  })
+
 
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {

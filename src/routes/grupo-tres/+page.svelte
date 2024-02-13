@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from "svelte";
+
   let modalForm;
   let modalEditar;
   let modalDetail;
@@ -24,14 +26,21 @@
         "https://payments-api-jpt5.onrender.com/api/v1/"
       );
       let data = await clients.json();
-      dataClients = data.data;
+
+      dataClients = data.data.filter((client) => client.modalityPayment === "semanal");
+      console.log(dataClients);
       sumarTotales(dataClients)
       loading = false;
     } catch (error) {
       console.log(error);
     }
   }
-  getClients();
+  
+  onMount(()=> {
+    getClients();
+  })
+
+
   let sumarTotalClients = 0;
   function sumarTotales(clients) {
     for(const client of clients) {
@@ -92,6 +101,7 @@
         }
       );
       const clientActualizado = await patchUser.json();
+      console.log(clientActualizado);
       modalEditar = false;
       window.location.reload();
     } catch (error) {
