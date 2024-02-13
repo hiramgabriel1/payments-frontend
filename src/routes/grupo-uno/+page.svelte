@@ -21,6 +21,9 @@
     pagado: false,
     cancelado: false,
   };
+
+  
+
   // todo: show all clients
   async function getClients() {
     try {
