@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import toast, { Toaster } from "svelte-french-toast";
 
   let modalEditar;
@@ -22,8 +23,6 @@
     cancelado: false,
   };
 
-  
-
   // todo: show all clients
   async function getClients() {
     try {
@@ -31,7 +30,7 @@
       
       const data = await response.json();
       let clientsSevenDays = data.data.filter((client) =>
-      client.modalityPayment === "quincenal");
+      client.grupo === "armandina");
       clients = clientsSevenDays;
       sumarTotales(clients) 
       loading = false;
@@ -39,7 +38,10 @@
       console.error("Error al obtener los clientes:", error);
     }
   }
-  getClients();
+
+  onMount(()=> {
+    getClients();
+  })
 
   let sumarTotalClients = 0
   function sumarTotales(clients) {

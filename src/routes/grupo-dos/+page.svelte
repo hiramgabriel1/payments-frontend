@@ -1,4 +1,5 @@
 <script>
+  import { onMount } from "svelte";
   import toast, { Toaster } from "svelte-french-toast";
 
   let modalEditar;
@@ -29,7 +30,7 @@
       );
       const data = await response.json();
       let clientsFourteenDays = data.data.filter((client) =>
-        client.modalityPayment === "semanal");
+        client.grupo === "san juana");
       clients = clientsFourteenDays;
       sumarTotales(clients)
       loading = false;
@@ -62,7 +63,10 @@
     console.log(fechasDePago);
     return fechasDePago;
   }
-  getClients();
+
+  onMount(()=> {
+    getClients();
+  })
 
   //Función que elimina usuario
   export async function deleteClientsPendientes(idDelete) {

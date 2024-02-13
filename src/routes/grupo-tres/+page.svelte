@@ -33,7 +33,7 @@
       );
       let data = await clients.json();
 
-      dataClients = data.data.filter((client) => client.modalityPayment === "semanal");
+      dataClients = data.data.filter((client) => client.grupo === "tianguis");
       console.log(dataClients);
       sumarTotales(dataClients)
       loading = false;
