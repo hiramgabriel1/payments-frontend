@@ -17,8 +17,6 @@
     pagado: false,
     cancelado: false,
   };
-  console.log(formData.pagado);
-  console.log(formData.cancelado);
 
   async function getClients() {
     try {
@@ -27,21 +25,23 @@
       );
       let data = await clients.json();
       dataClients = data.data;
+      sumarTotales(dataClients)
       loading = false;
-      console.log(dataClients);
     } catch (error) {
       console.log(error);
     }
   }
-
   getClients();
+  let sumarTotalClients = 0;
+  function sumarTotales(clients) {
+    for(const client of clients) {
+      sumarTotalClients += client.total || 0
+    }
+  } 
 
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
     try {
-      /*  let fechaPrestamo = formData.fechaPrestamo;
-        let fechaPago = formData.fechaMaximoPago; */
-
       const dataNew = {
         username: formData.username,
         lastName: formData.lastName,
@@ -51,9 +51,6 @@
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
       };
-
-      console.log(dataNew);
-      // console.log(typeof dataNew.convertMontoPrestamo);
 
       const response = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/create-user",
@@ -95,7 +92,6 @@
         }
       );
       const clientActualizado = await patchUser.json();
-      console.log(clientActualizado);
       modalEditar = false;
       window.location.reload();
     } catch (error) {
@@ -133,7 +129,6 @@
     searchResults = dataClients.filter((client) => {
       return client.username.toLowerCase().includes(searchTerm);
     });
-    console.log(searchResults);
   };
 
   //Detalles del cliente
@@ -188,55 +183,37 @@
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
-    <div
-      class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
-    >
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
-      >
-        <a href="/">Clientes</a>
-      </button>
+    <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+     
+      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/pagos-pendientes"> Pagos pendientes </a>
-      </button>
+      <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Pagos pendientes 
+      </a>
+   
+      <a href="clientes-cancelados" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes cancelados
+      </a>
+     
+      <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Historial de pagos 
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="clientes-cancelados">Clientes cancelados</a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/historial-pagos"> Historial de pagos </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-uno"> Armandina </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-dos"> San Juana </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
+      <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Armandina
+      </a>
+    
+      <a href="/grupo-dos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        San Juana 
+      </a>
+  
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Tianguis
       </button>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/pagos-cercanos"
-      >
+      <a href="/pagos-cercanos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </a>
     </div>
@@ -324,7 +301,7 @@
                   >Opciones</th
                 >
                 <th scope="col" class="relative py-3.5 px-4">
-                  <span class="sr-only">Edit</span>
+                  Suma total: {sumarTotalClients}
                 </th>
               </tr>
             </thead>
@@ -335,7 +312,7 @@
               <!-- Clientes -->
               {#if loading}
                 <tr>
-                  <td colspan="6">Cargando...</td>
+                  <td colspan="6" class="text-center">Cargando...</td>
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
@@ -577,7 +554,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos</td>
+                  <td colspan="6" class="text-center">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>
@@ -816,8 +793,8 @@
           bind:value={formData.modalityPayment}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
-          <option class="text-base" value="semanal">semanal</option>
-          <option class="text-base" value="quincenal">quincenal</option>
+          <option class="text-base" value="quincenal">Armandina</option>
+          <option class="text-base" value="semanal">San juana</option>
         </select>
 
         <!--Nombre del banco-->

@@ -65,7 +65,7 @@
   getClients();
 
   //Funcion que crea un nuevo usuario
-  const submitDataUser = async () => {
+/*   const submitDataUser = async () => {
     try {
       const dataNew = {
         username: formData.username,
@@ -92,14 +92,14 @@
         }
       );
       modalForm = false;
-      /*  window.location.reload(); */
+      window.location.reload(); 
       console.log(response);
       response.ok ? console.log("funciona") : console.log("no funciona lptm");
     } catch (error) {
       console.error(error);
     }
   };
-
+ */
   //Actualizar usuario
   const newData = (client) => {
   idUser = client._id;
@@ -202,66 +202,40 @@
         >
       {/if}
     </div>
-
-    <!-- Boton que abre el formulario para crear usuario -->
-    <!-- <div class="w-full flex justify-end py-12" id="button">
-        <button
-          on:click={() => (modalForm = true)}
-          class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm"
-          >Agregar cliente</button
-        >
-      </div> -->
   </div>
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
-    <div
-      class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
-    >
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
-      >
-        <a href="/"> Clientes </a>
-      </button>
+    <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes
+      </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/pagos-pendientes"
-      >
+      <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos pendientes
       </a>
+    
+      <a href="/clientes-cancelados" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes cancelados
+      </a>    
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/historial-pagos"
-      >
+      <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Historial de pagos
-      </a>
+      </a>    
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/grupo-uno"
-      >
+      <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Armandina
       </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/grupo-dos"
-      >
+      <a href="/grupo-dos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         San Juana
       </a>
-
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/grupo-tres"
-      >
+   
+      <a href="/grupo-tres" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Tianguis
       </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </button>
     </div>
@@ -361,7 +335,7 @@
               <!-- Clientes -->
               {#if loading}
                 <tr>
-                  <td colspan="6">Cargando...</td>
+                  <td colspan="6" class="text-center">Cargando...</td>
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
@@ -603,7 +577,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos</td>
+                  <td colspan="6" class="text-center">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>

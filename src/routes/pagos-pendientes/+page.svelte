@@ -29,13 +29,10 @@
   //Función que filtra a los clientes que no pagaron
   export async function clientesPendientes() {
     try {
-      const clients = await fetch(
-        "https://payments-api-jpt5.onrender.com/api/v1/"
-      );
+      const clients = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
       let data = await clients.json();
       let clientesFiltrados = data.data.filter(
-        (client) => client.pagado === false
-      );
+      (client) => client.pagado === false && client.modalityPayment !== 'quincenal');
       clientesPendiente = clientesFiltrados;
       loading = false;
     } catch (error) {
@@ -47,9 +44,6 @@
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
     try {
-      /* let fechaPrestamo = formData.fechaPrestamo;
-      let fechaPago = formData.fechaMaximoPago; */
-
       const dataNew = {
         username: formData.username,
         lastName: formData.lastName,
@@ -199,55 +193,36 @@
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
-    <div
-      class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700"
-    >
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300"
-      >
-        <a href="/"> Clientes </a>
-      </button>
+    <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
+      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/pagos-pendientes"> Pagos pendientes </a>
+      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Pagos pendientes
       </button>
+    
+      <a href="/clientes-cancelados" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes cancelados
+      </a>    
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="clientes-cancelados">Clientes cancelados</a>
-      </button>
+      <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Historial de pagos
+      </a>    
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/historial-pagos"> Historial de pagos </a>
-      </button>
+      <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Armandina
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-uno"> Armandina </a>
-      </button>
+      <a href="/grupo-dos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        San Juana
+      </a>
+   
+      <a href="/grupo-tres" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Tianguis
+      </a>
 
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-dos"> San Juana </a>
-      </button>
-
-      <button
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-      >
-        <a href="/grupo-tres"> Tianguis </a>
-      </button>
-
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/pagos-cercanos"
-      >
+      <a href='/pagos-cercanos' class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </a>
     </div>
@@ -346,7 +321,7 @@
               <!-- Clientes -->
               {#if loading}
                 <tr>
-                  <td colspan="6">Cargando...</td>
+                  <td colspan="6" class="text-center">Cargando...</td>
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
@@ -588,7 +563,7 @@
                 {/each}
               {:else}
                 <tr>
-                  <td colspan="6">No hay datos</td>
+                  <td colspan="6" class="text-center">No hay datos de clientes</td>
                 </tr>
               {/if}
             </tbody>
@@ -830,8 +805,8 @@
           bind:value={formData.modalityPayment}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
-          <option class="text-base" value="semanal">semanal</option>
-          <option class="text-base" value="quincenal">quincenal</option>
+          <option class="text-base" value="quincenal">Armandina</option>
+          <option class="text-base" value="semanal">San juana</option>
         </select>
 
         <!--Nombre del banco-->
