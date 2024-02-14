@@ -15,7 +15,7 @@
     fechaPago: "",
     paymentMethod: "",
     direccion: "",
-    modalityPayment: "",
+    grupo: "",
     pagado: false,
     cancelado: false,
   };
@@ -53,7 +53,7 @@
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
-        modalityPayment: formData.modalityPayment,
+        grupo: formData.grupo,
       };
 
       const response = await fetch(
@@ -798,11 +798,12 @@
         </label>
 
         <select
-          bind:value={formData.modalityPayment}
+          bind:value={formData.grupo}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
-        <option class="text-base" value="semanal">San juana</option>
-        <option class="text-base" value="quincenal">Armandina</option>
+          <option class="text-base" value="armandina">Armandina</option>
+          <option class="text-base" value="san juana">San juana</option>
+          <option class="text-base" value="tianguis">Tianguis</option>
         </select>
 
         <!--Nombre del banco-->
