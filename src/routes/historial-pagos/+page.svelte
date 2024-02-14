@@ -1,4 +1,7 @@
 <script>
+  import { onMount } from "svelte";
+  import toast, { Toaster } from "svelte-french-toast";
+
   let modalForm;
   let modalEditar;
   let modalDetail;
@@ -39,7 +42,18 @@
       console.log(error);
     }
   }
-  clientesPagos();
+  onMount(() => {
+    clientesPagos();
+  })
+
+  const validateCount = (e) => {
+    const event = e.target.value;
+
+    console.log(event);
+    if (event <= 0) {
+      return toast.error("Por favor ingrese un valor");
+    }
+  };
 
   const submitDataUser = async () => {
     try {
@@ -48,7 +62,7 @@
         username: formData.username,
         lastName: formData.lastName,
         capitalPrestado: formData.capitalPrestado,
-        total: formData.total,
+        total: total,
         fechaPrestamo: formData.fechaPrestamo,
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
@@ -150,8 +164,9 @@
     clienteDelete = clienteDeleteArray;
     modalDelete = true;
   };
-
 </script>
+
+<Toaster />
 
 <!-- modal -->
 <section class="container px-4 mx-auto">
@@ -621,6 +636,7 @@
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           bind:value={formData.username}
           placeholder="James"
+          on:input={validateCount}
         />
 
         <!--Apellido-->
@@ -634,6 +650,7 @@
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           bind:value={formData.lastName}
           placeholder="Gonzales"
+          on:input={validateCount}
         />
 
         <!--Monto del prestamo-->
@@ -749,6 +766,7 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
             placeholder="00-00-0000"
+            on:input={validateCount}
           />
         </div>
 
@@ -786,6 +804,7 @@
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPago}
             placeholder="00-00-0000"
+            on:input={validateCount}
           />
         </div>
 
@@ -799,6 +818,7 @@
 
         <select
           bind:value={formData.grupo}
+          on:input={validateCount}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
           <option class="text-base" value="armandina">Armandina</option>
@@ -837,6 +857,7 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={formData.paymentMethod}
             placeholder="BVBA"
+            on:input={validateCount}
           />
         </div>
 
@@ -849,6 +870,7 @@
         <input
           placeholder="Calle 7 y 8 Av.44"
           bind:value={formData.direccion}
+          on:input={validateCount}
           type="text"
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         />
@@ -946,6 +968,7 @@
             id="username"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             placeholder="James"
+            on:input={validateCount}
           />
 
           <!--Apellido-->
@@ -956,6 +979,7 @@
           >
           <input
             bind:value={formData.lastName}
+            on:input={validateCount}
             id="lastName"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             placeholder="Gonzales"
@@ -1082,7 +1106,8 @@
               type="text"
               id="fechaPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="MM/YY"
+              placeholder="00-00-0000"
+              on:input={validateCount}
             />
           </div>
 
@@ -1119,7 +1144,8 @@
               type="text"
               id="fechaMaximoPago"
               class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="MM/YY"
+              placeholder="00-00-0000"
+              on:input={validateCount}
             />
           </div>
 
@@ -1154,6 +1180,7 @@
               id="nombreBanco"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
               placeholder="BVBA"
+              on:input={validateCount}
             />
           </div>
 
@@ -1166,6 +1193,7 @@
           <input
             placeholder="Calle 7 y 8 Av.44"
             bind:value={formData.direccion}
+            on:input={validateCount}
             type="text"
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           />
@@ -1270,22 +1298,19 @@
 
         <div class="p-8 z-10">
           <h2 class="text-2xl mb-4">
-            Información del Cliente: {client.username}
-            {client.lastName}
+            Información del Cliente: {client.username} {client.lastName}
           </h2>
-          <hr class="mb-4" />
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
           <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
           <p class="text-lg mb-2">Total: {client.total}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
-          <p class="text-lg mb-2">
-            Modalidad de pago: {client.modalityPayment}
-          </p>
+          <p class="text-lg mb-2">Modalidad de pago: {client.grupo}</p>
           <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
           <p class="text-lg mb-2">Dirección: {client.direccion}</p>
           <p class="text-lg mb-2">Pagado: {client.pagado ? "Si" : "No"}</p>
+          <p class="text-lg mb-2">Cancelado: {client.cancelado ? "Si" : "No"}</p>
           <p class="text-lg mb-2">Id del cliente: {client._id}</p>
         </div>
       </div>

@@ -9,7 +9,7 @@
   let loading = true;
   let clients;
   let showDataPaymentToEdit = [];
-  let total;
+
 
   let formData = {
     username: "",
@@ -25,11 +25,11 @@
     cancelado: false,
   };
 
-  let totalPrestamo;
+  var total;
   function calcularTotal() {
     //@ts-ignore
     const comision = formData.capitalPrestado * 0.15;
-    return (totalPrestamo = formData.capitalPrestado + comision);
+    return (total = formData.capitalPrestado + comision);
   }
 
   async function getClients() {
@@ -49,6 +49,23 @@
     onMount(()=> {
       getClients();
     })
+
+    const validateCount = (e) => {
+    const event = e.target.value;
+
+    console.log(event);
+    if (event <= 0) {
+      return toast.error("Por favor ingrese un valor");
+    }
+  };
+    const validateCounter = (e) => {
+    const event = e.target.value;
+
+    console.log(event);
+    if (event <= 0) {
+      return toast.error("El valor debe ingresado debe ser mayor a 0");
+    }
+  };
 
     const submitDataUser = async () => {
     try {
@@ -107,16 +124,6 @@
     window.location.reload();
     modalDelete = false;
   }
-
-  const validateCount = (e) => {
-    const event = e.target.value;
-
-    console.log(event);
-    if (event <= 0) {
-      return toast.error("No puedes ingresar valores menores a 1");
-    }
-  };
-
 
   // todo: editar usuario
   let patchUser;
@@ -204,9 +211,9 @@
     clienteDelete = clienteDeleteArray;
     modalDelete = true;
   };
-  
   </script>
-  <Toaster />
+
+<Toaster />
 
 <section class="container px-4 mx-auto">
   <div class="sm:flex sm:items-center sm:justify-between">
@@ -621,6 +628,7 @@
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           bind:value={formData.username}
           placeholder="James"
+          on:input={validateCount}
         />
 
         <!--Apellido-->
@@ -634,6 +642,7 @@
           class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           bind:value={formData.lastName}
           placeholder="Gonzales"
+          on:input={validateCount}
         />
 
         <!--Monto del prestamo-->
@@ -707,7 +716,7 @@
             type="number"
             id="montoPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-            bind:value={totalPrestamo}
+            bind:value={total}
             placeholder="Monto total"
             readonly
           />
@@ -749,6 +758,7 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
             placeholder="00-00-0000"
+            on:input={validateCount}
           />
         </div>
 
@@ -786,6 +796,7 @@
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPago}
             placeholder="00-00-0000"
+            on:input={validateCount}
           />
         </div>
 
@@ -799,6 +810,7 @@
 
         <select
           bind:value={formData.grupo}
+          on:input={validateCount}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
           <option class="text-base" value="armandina">Armandina</option>
@@ -837,6 +849,7 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={formData.paymentMethod}
             placeholder="BVBA"
+            on:input={validateCount}
           />
         </div>
 
@@ -849,6 +862,7 @@
         <input
           placeholder="Calle 7 y 8 Av.44"
           bind:value={formData.direccion}
+          on:input={validateCount}
           type="text"
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         />
@@ -924,23 +938,20 @@
 
         <div class="p-8 z-10">
           <h2 class="text-2xl mb-4">
-            Información del Cliente: {client.username}
+            Información del Cliente: {client.username} {client.lastName}
           </h2>
-          <hr class="mb-4" />
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
-          <!-- <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p> -->
-          <p class="text-lg mb-2">
-            Fecha del prestamo: {client.fechaPrestamo}
-          </p>
-          <p class="text-lg mb-2">
-            Fecha limite de pago: {client.fechaPago}
-          </p>
+          <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
+          <p class="text-lg mb-2">Total: {client.total}</p>
+          <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
+          <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
+          <p class="text-lg mb-2">Modalidad de pago: {client.grupo}</p>
           <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
           <p class="text-lg mb-2">Dirección: {client.direccion}</p>
-          <p class="text-lg mb-2">Total: {client.total}</p>
-          <p class="text-lg mb-2">Pagado: {client.pagado ? "si" : "no"}</p>
-          <p class="text-lg mb-2">ID: {client._id}</p>
+          <p class="text-lg mb-2">Pagado: {client.pagado ? "Si" : "No"}</p>
+          <p class="text-lg mb-2">Cancelado: {client.cancelado ? "Si" : "No"}</p>
+          <p class="text-lg mb-2">Id del cliente: {client._id}</p>
         </div>
       </div>
     </div>
@@ -1049,7 +1060,8 @@
               bind:value={formData.username}
               id="username"
               class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder={clientRender.username}
+              placeholder="James"
+              on:input={validateCount}
             />
 
             <!--Apellido-->
@@ -1060,6 +1072,7 @@
             >
             <input
               bind:value={formData.lastName}
+              on:input={validateCount}
               id="lastName"
               class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
               placeholder="Gonzales"
@@ -1099,7 +1112,7 @@
                 bind:value={formData.capitalPrestado}
                 type="number"
                 id="montoPrestamo"
-                on:input={validateCount}
+                on:input={validateCounter}
                 class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
                 placeholder="Monto"
               />

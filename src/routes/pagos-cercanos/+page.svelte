@@ -1,5 +1,7 @@
 <script>
-  /* let modalForm; */
+  import { onMount } from "svelte";
+  import toast, { Toaster } from "svelte-french-toast";  
+
   let modalEditar;
   let modalDetail;
   let modalDelete;
@@ -61,8 +63,18 @@
     // Nota: Los meses en JavaScript están basados en cero, por lo que restamos 1 al mes
     return new Date(partes[2], partes[1] - 1, partes[0]);
   }
+  onMount(() => {
+    return getClients();
+  })
 
-  getClients();
+  const validateCount = (e) => {
+    const event = e.target.value;
+
+    console.log(event);
+    if (event <= 0) {
+      return toast.error("Por favor ingrese un valor");
+    }
+  };
 
   //Funcion que crea un nuevo usuario
 /*   const submitDataUser = async () => {
@@ -179,6 +191,8 @@
   };
 
 </script>
+
+<Toaster />
 
 <!-- modal -->
 <section class="container mt-24 px-4 mx-auto">
@@ -636,9 +650,10 @@
           >
           <input
             bind:value={formData.username}
+            on:input={validateCount}
             id="username"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            placeholder="James"
+            placeholder="James"           
           />
 
           <!--Apellido-->
@@ -649,6 +664,7 @@
           >
           <input
             bind:value={formData.lastName}
+            on:input={validateCount}
             id="lastName"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             placeholder="Gonzales"
@@ -721,13 +737,23 @@
                 <line x1="11" y1="15" x2="13" y2="15" />
               </svg>
             </div>
+            {#if total !== undefined}
             <input
-              bind:value={formData.total}
-              type="number"
-              id="montoPrestamo"
-              class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              placeholder="Monto total"
-            />
+             bind:value={total}
+             type="number"
+             id="montoPrestamo"
+             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+             placeholder="Monto total"
+             />
+           {:else}
+           <input
+             bind:value={formData.total}
+             type="number"
+             id="montoPrestamo"
+             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+             placeholder="Monto total"
+             />
+         {/if}
           </div>
 
           <!--Fecha de prestamo-->
@@ -765,7 +791,8 @@
               type="text"
               id="fechaPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="MM/YY"
+              placeholder="00-00-0000"
+              on:input={validateCount}
             />
           </div>
 
@@ -802,7 +829,8 @@
               type="text"
               id="fechaMaximoPago"
               class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="MM/YY"
+              placeholder="00-00-0000"
+              on:input={validateCount}
             />
           </div>
 
@@ -837,6 +865,7 @@
               id="nombreBanco"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
               placeholder="BVBA"
+              on:input={validateCount}
             />
           </div>
 
@@ -849,6 +878,7 @@
           <input
             placeholder="Calle 7 y 8 Av.44"
             bind:value={formData.direccion}
+            on:input={validateCount}
             type="text"
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
           />
