@@ -1,4 +1,5 @@
 <script>
+  import {onMount} from 'svelte'
   let modalForm;
   let modalEditar;
   let modalDetail;
@@ -15,7 +16,7 @@
     fechaPago: "",
     paymentMethod: "",
     direccion: "",
-    modalityPayment: "",
+    grupo: "",
     pagado: false,
     cancelado: false,
   };
@@ -39,7 +40,9 @@
       console.log(error);
     }
   }
-  clientesPendientes();
+  onMount(() => {
+    clientesPendientes();
+  })
 
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
@@ -53,7 +56,7 @@
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
-        modalityPayment: formData.modalityPayment,
+        grupo: formData.grupo
       };
 
       console.log(dataNew);
@@ -802,11 +805,13 @@
         </label>
 
         <select
-          bind:value={formData.modalityPayment}
+          bind:value={formData.grupo}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
-          <option class="text-base" value="quincenal">Armandina</option>
-          <option class="text-base" value="semanal">San juana</option>
+          <option class="text-base" value="armandina">Armandina</option>
+          <option class="text-base" value="san juana">San juana</option>
+          <option class="text-base" value="tianguis">Tianguis</option>
+          
         </select>
 
         <!--Nombre del banco-->
@@ -1031,13 +1036,23 @@
                 <line x1="11" y1="15" x2="13" y2="15" />
               </svg>
             </div>
+            {#if total !== undefined}
             <input
-              bind:value={formData.total}
-              type="number"
-              id="montoPrestamo"
-              class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              placeholder="Monto total"
-            />
+             bind:value={total}
+             type="number"
+             id="montoPrestamo"
+             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+             placeholder="Monto total"
+             />
+           {:else}
+           <input
+             bind:value={formData.total}
+             type="number"
+             id="montoPrestamo"
+             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+             placeholder="Monto total"
+             />
+         {/if}
           </div>
 
           <!--Fecha de prestamo-->

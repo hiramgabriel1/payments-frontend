@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from "svelte";
+
   let modalForm;
   let modalEditar;
   let modalDetail;
@@ -15,12 +17,11 @@
     fechaPago: "",
     paymentMethod: "",
     direccion: "",
-    modalityPayment: "".toLocaleLowerCase(),
     daysPayment: "",
+    grupo: "",
     pagado: false,
     cancelado: false,
   };
-
 
   var total;
   function calcularTotal() {
@@ -41,8 +42,10 @@
       console.log(error);
     }
   }
+  onMount(()=> {
+    return getClients();
+  })
 
-  getClients();
 
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
@@ -56,7 +59,7 @@
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
-        modalityPayment: formData.modalityPayment.toLocaleLowerCase(),
+        grupo: formData.grupo
       };
 
       const response = await fetch(
@@ -69,8 +72,9 @@
           body: JSON.stringify(dataNew),
         }
       );
+      console.log(response);
       modalForm = false;
-      window.location.reload();
+      
       response.ok ? console.log("funciona") : console.log("no funciona lptm");
     } catch (error) {
       console.error(error);
@@ -79,9 +83,9 @@
 
   //Actualizar usuario
   const newData = (client) => {
-  idUser = client._id;
-  formData = {...client}
-  modalEditar = true;
+    idUser = client._id;
+    formData = { ...client };
+    modalEditar = true;
   };
   //Función que Actualiza un cliente
   let patchUser;
@@ -152,8 +156,6 @@
     clienteDelete = clienteDeleteArray;
     modalDelete = true;
   };
-
-
 </script>
 
 <!-- modal -->
@@ -820,11 +822,12 @@
         </label>
 
         <select
-          bind:value={formData.modalityPayment}
+          bind:value={formData.grupo}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
-          <option class="text-base" value="quincenal">Armandina</option>
-          <option class="text-base" value="semanal">San juana</option>
+          <option class="text-base" value="armandina">Armandina</option>
+          <option class="text-base" value="san juana">San juana</option>
+          <option class="text-base" value="tianguis">Tianguis</option>
         </select>
 
         <!--Nombre del banco-->
@@ -965,7 +968,7 @@
             bind:value={formData.username}
             id="username"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            placeholder='James'
+            placeholder="James"
           />
 
           <!--Apellido-->

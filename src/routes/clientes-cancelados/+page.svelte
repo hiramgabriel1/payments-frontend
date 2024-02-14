@@ -4,7 +4,7 @@
   let modalDetail;
   let modalDelete;
   let loading = true;
-  let clientesCancelado = [];
+  let clientesPendiente = [];
 
   let formData = {
     username: "",
@@ -15,7 +15,7 @@
     fechaPago: "",
     paymentMethod: "",
     direccion: "",
-    modalityPayment: "",
+    grupo: "",
     pagado: false,
     cancelado: false,
   };
@@ -26,36 +26,37 @@
     return (total = formData.capitalPrestado + comision);
   }
 
-  export async function clientesCancelados() {
+  //Función que filtra a los clientes que no pagaron
+  export async function clientesPendientes() {
     try {
-      const clients = await fetch(
-        "https://payments-api-jpt5.onrender.com/api/v1/"
-      );
+      const clients = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
       let data = await clients.json();
       let clientesFiltrados = data.data.filter(
-        (client) => client.cancelado === true && client.modalityPayment !== 'quincenal'
-      );
-      clientesCancelado = clientesFiltrados;
+      (client) => client.cancelado === true && client.modalityPayment !== 'quincenal');
+      clientesPendiente = clientesFiltrados;
       loading = false;
     } catch (error) {
       console.log(error);
     }
   }
-  clientesCancelados();
+  clientesPendientes();
 
+  //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
     try {
       const dataNew = {
         username: formData.username,
         lastName: formData.lastName,
         capitalPrestado: formData.capitalPrestado,
-        total: formData.total,
+        total: total,
         fechaPrestamo: formData.fechaPrestamo,
-        fechaPago: form.fechaPago,
+        fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
-        modalityPayment: formData.modalityPayment,
+        grupo: formData.grupo
       };
+
+      console.log(dataNew);
 
       const response = await fetch(
         "https://payments-api-jpt5.onrender.com/api/v1/create-user",
@@ -69,7 +70,6 @@
       );
       modalForm = false;
       window.location.reload();
-      console.log(response);
       response.ok ? console.log("funciona") : console.log("no funciona lptm");
     } catch (error) {
       console.error(error);
@@ -105,7 +105,7 @@
   }
 
   //Función que elimina usuario
-  export async function deleteClientsCancelados(idDelete) {
+  export async function deleteClientsPendientes(idDelete) {
     const response = await fetch(
       `https://payments-api-jpt5.onrender.com/api/v1/delete-user/${idDelete}`,
       {
@@ -116,6 +116,7 @@
     const deletedClient = await response.json();
     console.log("cliente eliminado con exito " + deletedClient);
     modalDelete = false;
+    window.location.reload();
   }
 
   /* Search */
@@ -130,11 +131,13 @@
   };
 
   const handleSearch = () => {
-    searchResults = clientesCancelado.filter((client) => {
+    searchResults = clientesPendiente.filter((client) => {
       return client.username.toLowerCase().includes(searchTerm);
     });
+    console.log(searchResults);
   };
 
+  //Detalles del cliente
   let clienteDetail = [];
   const mostrarModalDetail = (client) => {
     let clienteDetailArray = [client];
@@ -142,12 +145,14 @@
     modalDetail = true;
   };
 
+  //Eliminar usuario
   let clienteDelete;
   const mostrarModalDelete = (client) => {
     let clienteDeleteArray = [client];
     clienteDelete = clienteDeleteArray;
     modalDelete = true;
   };
+
 
 </script>
 
@@ -160,28 +165,28 @@
           Total clientes:
         </h2>
         <!--Numeros de clientes-->
-        {#if clientesCancelado}
+        {#if clientesPendiente}
           <span
             class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
           >
-            {clientesCancelado.length}
-            {clientesCancelado.length === 1 ? "cliente" : "clientes"}
+            {clientesPendiente.length}
+            {clientesPendiente.length === 1 ? "cliente" : "clientes"}
           </span>
         {:else}
           <span
             class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
           >
-            0 clientes</span
-          >
+            0 clientes
+          </span>
         {/if}
       </div>
     </div>
-
+    <!-- Boton que abre el formulario para crear usuario -->
     <div class="w-full flex justify-end py-12" id="button">
       <button
         on:click={() => (modalForm = true)}
         class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm"
-        onclick="modalHandler(true)">Agregar cliente</button
+        >Agregar cliente</button
       >
     </div>
   </div>
@@ -189,34 +194,35 @@
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
     <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
-      
-      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"> Clientes </a>
-
-      <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Pagos pendientes 
+      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes
       </a>
-     
+
       <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Clientes cancelados
+        Pagos pendientes
       </button>
+    
+      <a href="/clientes-cancelados" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Clientes cancelados
+      </a>    
 
       <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Historial de pagos 
-      </a>
-  
+        Historial de pagos
+      </a>    
+
       <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Armandina
       </a>
-    
+
       <a href="/grupo-dos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         San Juana
       </a>
- 
+   
       <a href="/grupo-tres" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Tianguis 
+        Tianguis
       </a>
-  
-      <a href="/pagos-cercanos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+
+      <a href='/pagos-cercanos' class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </a>
     </div>
@@ -436,8 +442,8 @@
                     </td>
                   </tr>
                 {/each}
-              {:else if clientesCancelado.length > 0}
-                {#each clientesCancelado as client}
+              {:else if clientesPendiente.length > 0}
+                {#each clientesPendiente as client}
                   <tr>
                     <!--Id clientes-->
                     <td class="px-4 py-4 text-sm font-medium whitespace-nowrap">
@@ -664,7 +670,7 @@
             </svg>
           </div>
           <input
-            type="text"
+            type="number"
             id="montoPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={formData.capitalPrestado}
@@ -707,6 +713,7 @@
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
             bind:value={total}
             placeholder="Monto total"
+            readonly
           />
         </div>
 
@@ -741,11 +748,11 @@
             </svg>
           </div>
           <input
-            type="date"
+            type="text"
             id="fechaPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
-            placeholder="MM/YY"
+            placeholder="00-00-0000"
           />
         </div>
 
@@ -778,11 +785,11 @@
             </svg>
           </div>
           <input
-            type="date"
+            type="text"
             id="fechaMaximoPago"
             class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPago}
-            placeholder="MM/YY"
+            placeholder="00-00-0000"
           />
         </div>
 
@@ -793,12 +800,15 @@
         >
           Modalidad de pago
         </label>
+
         <select
-          bind:value={formData.modalityPayment}
+          bind:value={formData.grupo}
           class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
         >
-          <option class="text-base" value="semanal">semanal</option>
-          <option class="text-base" value="quincenal">quincenal</option>
+          <option class="text-base" value="armandina">Armandina</option>
+          <option class="text-base" value="san juana">San juana</option>
+          <option class="text-base" value="tianguis">Tianguis</option>
+          
         </select>
 
         <!--Nombre del banco-->
@@ -890,6 +900,7 @@
     </form>
   </div>
 {/if}
+
 
 <!-- Modal Actualizar cliente -->
 {#if modalEditar}
@@ -1022,13 +1033,23 @@
                 <line x1="11" y1="15" x2="13" y2="15" />
               </svg>
             </div>
+            {#if total !== undefined}
             <input
-              bind:value={formData.total}
-              type="number"
-              id="Total"
-              class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              placeholder="Monto total"
-            />
+             bind:value={total}
+             type="number"
+             id="montoPrestamo"
+             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+             placeholder="Monto total"
+             />
+           {:else}
+           <input
+             bind:value={formData.total}
+             type="number"
+             id="montoPrestamo"
+             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+             placeholder="Monto total"
+             />
+         {/if}
           </div>
 
           <!--Fecha de prestamo-->
@@ -1066,7 +1087,7 @@
               type="text"
               id="fechaPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="00-00-0000"
+              placeholder="MM/YY"
             />
           </div>
 
@@ -1103,7 +1124,7 @@
               type="text"
               id="fechaMaximoPago"
               class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="00-00-0000"
+              placeholder="MM/YY"
             />
           </div>
 
@@ -1166,6 +1187,19 @@
               id="pagadoCheckbox"
               checked={formData.pagado}
               on:change={() => (formData.pagado = !formData.pagado)}
+            />
+
+            <label
+              for="canceladoCheckbox"
+              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+              >Cancelado</label
+            >
+            <input
+              class="w-10 cursor-pointer"
+              type="checkbox"
+              id="canceladoCheckbox"
+              checked={formData.cancelado}
+              on:change={() => (formData.cancelado = !formData.cancelado)}
             />
           </div>
 
@@ -1282,7 +1316,7 @@
         <div class="flex justify-between px-8 pb-8">
           <div>
             <button
-              on:click={() => deleteClientsCancelados(client._id)}
+              on:click={() => deleteClientsPendientes(client._id)}
               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
               >Si</button
             >

@@ -1,6 +1,8 @@
-<script>
+<script >
+  import { onMount } from "svelte";
   import toast, { Toaster } from "svelte-french-toast";
 
+  let modalForm
   let modalEditar;
   let modalDetail;
   let modalDelete;
@@ -18,18 +20,24 @@
     fechaPago: "",
     paymentMethod: "",
     direccion: "",
+    grupo: "",
     pagado: false,
     cancelado: false,
   };
 
+  let totalPrestamo;
+  function calcularTotal() {
+    //@ts-ignore
+    const comision = formData.capitalPrestado * 0.15;
+    return (totalPrestamo = formData.capitalPrestado + comision);
+  }
+
   async function getClients() {
     try {
-      const response = await fetch(
-        "https://payments-api-jpt5.onrender.com/api/v1/"
-      );
+      const response = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
       const data = await response.json();
       let clientsFourteenDays = data.data.filter((client) =>
-        client.modalityPayment === "semanal");
+      client.grupo === "san juana");
       clients = clientsFourteenDays;
       sumarTotales(clients)
       loading = false;
@@ -37,6 +45,45 @@
       console.error("Error al obtener los clientes:", error);
     }
   }
+  
+    onMount(()=> {
+      getClients();
+    })
+
+    const submitDataUser = async () => {
+    try {
+      const dataNew = {
+        username: formData.username,
+        lastName: formData.lastName,
+        capitalPrestado: formData.capitalPrestado,
+        total: total,
+        fechaPrestamo: formData.fechaPrestamo,
+        fechaPago: formData.fechaPago,
+        paymentMethod: formData.paymentMethod,
+        direccion: formData.direccion,
+        grupo: formData.grupo
+      };
+
+      const response = await fetch(
+        "https://payments-api-jpt5.onrender.com/api/v1/create-user",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(dataNew),
+        }
+      );
+      console.log(response);
+      modalForm = false;
+      window.location.reload();
+      response.ok ? console.log("funciona") : console.log("no funciona lptm");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
   let sumarTotalClients = 0;
   function sumarTotales(clients) {
     for(const client of clients) {
@@ -44,28 +91,9 @@
     }
   }
 
-  function calcularFechasDePago(client) {
-    const { fechaPrestamo, fechaPago } = client;
-
-    let fechaInicioPago = new Date(fechaPrestamo);
-    const fechaFinalPago = new Date(fechaPago);
-
-    let fechaInicioPrestamo = new Date(fechaInicioPago);
-    fechaInicioPrestamo.setDate(fechaInicioPrestamo.getDate() + 14);
-
-    const fechasDePago = [];
-
-    while (fechaInicioPrestamo < fechaFinalPago) {
-      fechasDePago.push(new Date(fechaInicioPrestamo));
-      fechaInicioPrestamo.setDate(fechaInicioPrestamo.getDate() + 14);
-    }
-    console.log(fechasDePago);
-    return fechasDePago;
-  }
-  getClients();
 
   //Función que elimina usuario
-  export async function deleteClientsPendientes(idDelete) {
+  async function deleteClientsPendientes(idDelete) {
     const response = await fetch(
       `https://payments-api-jpt5.onrender.com/api/v1/delete-user/${idDelete}`,
       {
@@ -102,6 +130,7 @@
         return;
       } else {
         formData.total =
+        //@ts-ignore
           formData.capitalPrestado -
           showDataPaymentToEdit.reduce((acc, client) => acc + client.total, 0);
 
@@ -175,11 +204,11 @@
     clienteDelete = clienteDeleteArray;
     modalDelete = true;
   };
-</script>
+  
+  </script>
+  <Toaster />
 
-<Toaster />
-
-<section class="container mt-24 px-4 mx-auto">
+<section class="container px-4 mx-auto">
   <div class="sm:flex sm:items-center sm:justify-between">
     <div>
       <div class="flex items-center gap-x-3">
@@ -202,10 +231,14 @@
         {/if}
       </div>
     </div>
-
-    <div class="flex items-center mt-4 gap-x-3">
-      <!--Modal creacion de nuevos usuarios-->
-    </div>
+      <!-- Boton que abre el formulario para crear usuario -->
+      <div class="w-full flex justify-end py-12" id="button">
+        <button
+          on:click={() => (modalForm = true)}
+          class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm"
+          >Agregar cliente</button
+        >
+      </div>
   </div>
 
   <div class="mt-6 md:flex md:items-center md:justify-between">
@@ -349,7 +382,7 @@
                 </tr>
               {:else if searchResults.length > 0}
                 {#each searchResults as client}
-                  {#if client.modalityPayment === "semanal"}
+                  {#if client.grupo === "san juana"}
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
@@ -426,7 +459,7 @@
                 {/each}
               {:else if clients.length > 0}
                 {#each clients as client}
-                  {#if client.modalityPayment === "semanal"}
+                  {#if client.grupo === "san juana"}
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
@@ -537,6 +570,331 @@
     </div>
   </div>
 </section>
+
+{#if modalForm}
+  <div
+    class="py-12 transition duration-150 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0"
+    id="modal"
+  >
+    <form
+      on:submit|preventDefault={submitDataUser}
+      role="alert"
+      class="container mx-auto w-11/12 md:w-2/3 max-w-lg"
+    >
+      <div
+        class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400"
+      >
+        <div class="w-full flex justify-start text-gray-600 mb-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon icon-tabler icon-tabler-wallet"
+            width="52"
+            height="52"
+            viewBox="0 0 24 24"
+            stroke-width="1"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" />
+            <path
+              d="M17 8v-3a1 1 0 0 0 -1 -1h-10a2 2 0 0 0 0 4h12a1 1 0 0 1 1 1v3m0 4v3a1 1 0 0 1 -1 1h-12a2 2 0 0 1 -2 -2v-12"
+            />
+            <path d="M20 12v4h-4a2 2 0 0 1 0 -4h4" />
+          </svg>
+        </div>
+        <h1
+          class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4"
+        >
+          Agregar nuevo usuario
+        </h1>
+
+        <!--Nombre-->
+        <label
+          for="name"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >Nombre</label
+        >
+        <input
+          id="name"
+          class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+          bind:value={formData.username}
+          placeholder="James"
+        />
+
+        <!--Apellido-->
+        <label
+          for="apellido"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >Apellido</label
+        >
+        <input
+          id="apellido"
+          class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+          bind:value={formData.lastName}
+          placeholder="Gonzales"
+        />
+
+        <!--Monto del prestamo-->
+        <label
+          for="montoPrestamo"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >Capital prestado</label
+        >
+        <div class="relative mb-5 mt-2">
+          <div
+            class="absolute text-gray-600 flex items-center px-4 border-r h-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon icon-tabler icon-tabler-credit-card"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" />
+              <rect x="3" y="5" width="18" height="14" rx="3" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+              <line x1="7" y1="15" x2="7.01" y2="15" />
+              <line x1="11" y1="15" x2="13" y2="15" />
+            </svg>
+          </div>
+          <input
+            type="number"
+            id="montoPrestamo"
+            class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+            bind:value={formData.capitalPrestado}
+            placeholder="Monto prestamo"
+            on:input={calcularTotal}
+          />
+        </div>
+
+        <label
+          for="montoPrestamo"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >Total</label
+        >
+        <div class="relative mb-5 mt-2">
+          <div
+            class="absolute text-gray-600 flex items-center px-4 border-r h-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon icon-tabler icon-tabler-credit-card"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" />
+              <rect x="3" y="5" width="18" height="14" rx="3" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+              <line x1="7" y1="15" x2="7.01" y2="15" />
+              <line x1="11" y1="15" x2="13" y2="15" />
+            </svg>
+          </div>
+          <input
+            type="number"
+            id="montoPrestamo"
+            class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+            bind:value={totalPrestamo}
+            placeholder="Monto total"
+            readonly
+          />
+        </div>
+
+        <!--Fecha de prestamo-->
+        <label
+          for="fechaPrestamo"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >Fecha del prestamo</label
+        >
+        <div class="relative mb-5 mt-2">
+          <div
+            class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon icon-tabler icon-tabler-calendar-event"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" />
+              <rect x="4" y="5" width="16" height="16" rx="2" />
+              <line x1="16" y1="3" x2="16" y2="7" />
+              <line x1="8" y1="3" x2="8" y2="7" />
+              <line x1="4" y1="11" x2="20" y2="11" />
+              <rect x="8" y="15" width="2" height="2" />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="fechaPrestamo"
+            class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+            bind:value={formData.fechaPrestamo}
+            placeholder="00-00-0000"
+          />
+        </div>
+
+        <!--Fecha maxima de pago-->
+        <label
+          for="fechaMaximoPago"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >Fecha maxima de pago</label
+        >
+        <div class="relative mb-5 mt-2">
+          <div
+            class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="icon icon-tabler icon-tabler-info-circle"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z"></path>
+              <circle cx="12" cy="12" r="9"></circle>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              <polyline points="11 12 12 12 12 16 13 16"></polyline>
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="fechaMaximoPago"
+            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+            bind:value={formData.fechaPago}
+            placeholder="00-00-0000"
+          />
+        </div>
+
+        <!-- Modalidad de pago -->
+        <label
+          for="direccion"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+        >
+          Modalidad de pago
+        </label>
+
+        <select
+          bind:value={formData.grupo}
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        >
+          <option class="text-base" value="armandina">Armandina</option>
+          <option class="text-base" value="san juana">San juana</option>
+          <option class="text-base" value="tianguis">Tianguis</option>
+        </select>
+
+        <!--Nombre del banco-->
+        <label
+          for="nombreBanco"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+          >Nombre del banco</label
+        >
+        <div class="relative mb-5 mt-2">
+          <div
+            class="absolute text-gray-600 flex items-center px-4 border-r h-full"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-6 h-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
+              />
+            </svg>
+          </div>
+          <input
+            type="text"
+            id="nombreBanco"
+            class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
+            bind:value={formData.paymentMethod}
+            placeholder="BVBA"
+          />
+        </div>
+
+        <label
+          for="direccion"
+          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
+        >
+          Dirección
+        </label>
+        <input
+          placeholder="Calle 7 y 8 Av.44"
+          bind:value={formData.direccion}
+          type="text"
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
+        />
+
+        <div class="flex items-center justify-start w-full">
+          <!--Btn guardar datos-->
+          <button
+            class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-indigo-700 rounded text-white px-4 sm:px-8 py-2 text-xs sm:text-sm"
+          >
+            Agregar
+          </button>
+
+          <button
+            class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm"
+            on:click={() => (modalForm = false)}
+          >
+            Cancelar
+          </button>
+        </div>
+        <button
+          class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600"
+          on:click={() => (modalForm = false)}
+          aria-label="close modal"
+          type="button"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon icon-tabler icon-tabler-x"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            stroke-width="2.5"
+            stroke="currentColor"
+            fill="none"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path stroke="none" d="M0 0h24v24H0z" />
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </form>
+  </div>
+{/if}
 
 <!-- Modal Detalles del cliente -->
 {#if modalDetail}
