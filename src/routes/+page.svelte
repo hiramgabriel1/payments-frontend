@@ -82,6 +82,9 @@
         }
       );
       console.log(response);
+
+      window.location.reload()
+
       modalForm = false;
       
       response.ok ? console.log("funciona") : console.log("no funciona lptm");

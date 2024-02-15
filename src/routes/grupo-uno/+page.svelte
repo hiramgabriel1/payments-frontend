@@ -30,7 +30,6 @@
     return (total = formData.capitalPrestado + comision);
   }
 
-
   // todo: show all clients
   async function getClients() {
     try {
