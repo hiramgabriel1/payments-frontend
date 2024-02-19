@@ -16,7 +16,7 @@
     capitalPrestado: "",
     total: total,
     fechaPrestamo: "",
-    fechaPago: "",
+    fechaPago: fechaDePago,
     paymentMethod: "",
     direccion: "",
     grupo: "",
@@ -24,12 +24,18 @@
     cancelado: false,
   };
   
+  var fechaDePago;
   var total;
   function calcularTotal() {
     const comision = formData.capitalPrestado * 0.15;
     return (total = formData.capitalPrestado + comision);
   }
 
+  const calcularFechaLimite = () => {
+    const fechaPrestamo = new Date(formData.fechaPrestamo);
+    fechaPrestamo.setDate(fechaPrestamo.getDate() + (14 * 7));
+    formData.fechaPago = fechaPrestamo.toLocaleDateString();
+};
 
   // todo: show all clients
   async function getClients() {
@@ -71,6 +77,7 @@
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
     try {
+      calcularFechaLimite()
       const dataNew = {
         username: formData.username,
         lastName: formData.lastName,
@@ -105,7 +112,7 @@
   let sumarTotalClients = 0
   function sumarTotales(clients) {
     for(const client of clients) {
-      sumarTotalClients += client.total || 0
+      sumarTotalClients += Math.floor(client.total * 1.15) || 0
     }
     console.log(sumarTotalClients)
   }
@@ -410,9 +417,9 @@
                         >{client.total}</td
                       >
                       <td d class="px-4 py-8 text-gray-700 text-sm">
-                        {client.fechaPrestamo.slice(0, 15)}
+                        {client.fechaPrestamo}
                         <br />
-                        {client.fechaPago.slice(0, 15)}
+                        {client.fechaPago}
                       </td>
                     </tr>
                   {/if}
@@ -435,9 +442,9 @@
                         >{client.total}</td
                       >
                       <td class="px-4 py-8 text-gray-700 text-sm">
-                        {client.fechaPrestamo.slice(0, 15)}
+                        {client.fechaPrestamo}
                         <br />
-                        {client.fechaPago.slice(0, 15)}
+                        {client.fechaPago}
                       </td>
 
                       <td class="px-4 py-2">
@@ -707,7 +714,7 @@
             </svg>
           </div>
           <input
-            type="text"
+            type="date"
             id="fechaPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
@@ -715,44 +722,7 @@
             on:input={validateCount}
           />
         </div>
-
         <!--Fecha maxima de pago-->
-        <label
-          for="fechaMaximoPago"
-          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-          >Fecha maxima de pago</label
-        >
-        <div class="relative mb-5 mt-2">
-          <div
-            class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icon-tabler icon-tabler-info-circle"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z"></path>
-              <circle cx="12" cy="12" r="9"></circle>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              <polyline points="11 12 12 12 12 16 13 16"></polyline>
-            </svg>
-          </div>
-          <input
-            type="text"
-            id="fechaMaximoPago"
-            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            bind:value={formData.fechaPago}
-            placeholder="00-00-0000"
-            on:input={validateCount}
-          />
-        </div>
 
         <!-- Modalidad de pago -->
         <label
@@ -1142,7 +1112,7 @@
                 </svg>
               </div>
               <input
-                type="text"
+                type="date"
                 id="fechaPrestamo"
                 class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
                 bind:value={formData.fechaPrestamo}
@@ -1150,45 +1120,9 @@
                 placeholder="00-00-0000"
               />
             </div>
-
             <!--Fecha maxima de pago-->
-            <label
-              for="fechaMaximoPago"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >Fecha maxima de pago</label
-            >
-            <div class="relative mb-5 mt-2">
-              <div
-                class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="icon icon-tabler icon-tabler-info-circle"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z"></path>
-                  <circle cx="12" cy="12" r="9"></circle>
-                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                  <polyline points="11 12 12 12 12 16 13 16"></polyline>
-                </svg>
-              </div>
-              <input
-                type="text"
-                id="fechaMaximoPago"
-                class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-                bind:value={formData.fechaPago}
-                on:input={validateCount}
-                placeholder="00-00-00000"
-              />
-            </div>
-
+          
+            <!-- Modalidad de pago -->
             <div class="pagados">
               <label
                 for="pagadoCheckbox"

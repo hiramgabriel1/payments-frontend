@@ -8,14 +8,14 @@
   let modalDelete;
   let dataClients;
   let loading = true;
-
+  
   let formData = {
     username: "",
     lastName: "",
     capitalPrestado: "",
     total: total,
     fechaPrestamo: "",
-    fechaPago: "",
+    fechaPago: fechaDePago,
     paymentMethod: "",
     direccion: "",
     daysPayment: "",
@@ -23,12 +23,19 @@
     pagado: false,
     cancelado: false,
   };
-
+  
+  var fechaDePago;
   var total;
   function calcularTotal() {
     const comision = formData.capitalPrestado * 0.15;
     return (total = formData.capitalPrestado + comision);
   }
+
+  const calcularFechaLimite = () => {
+    const fechaPrestamo = new Date(formData.fechaPrestamo);
+    fechaPrestamo.setDate(fechaPrestamo.getDate() + (14 * 7));
+    formData.fechaPago = fechaPrestamo.toLocaleDateString();
+};
 
   async function getClients() {
     try {
@@ -38,7 +45,7 @@
       let data = await clients.json();
       dataClients = data.data;
       loading = false;
-      console.log(dataClients);
+      calcularFechaLimite()
     } catch (error) {
       console.log(error);
     }
@@ -49,46 +56,46 @@
 
   const validateCount = (e) => {
     const event = e.target.value;
-
-    console.log(event);
     if (event <= 0) {
       return toast.error("Por favor ingrese un valor");
     }
   };
 
+  
+
   //Funcion que crea un nuevo usuario
   const submitDataUser = async () => {
     try {
-      const dataNew = {
-        username: formData.username,
-        lastName: formData.lastName,
-        capitalPrestado: formData.capitalPrestado,
-        total: total,
-        fechaPrestamo: formData.fechaPrestamo,
-        fechaPago: formData.fechaPago,
-        paymentMethod: formData.paymentMethod,
-        direccion: formData.direccion,
-        grupo: formData.grupo
-      };
+        calcularFechaLimite(); // Llamar a la función antes de enviar los datos
+        const dataNew = {
+            username: formData.username,
+            lastName: formData.lastName,
+            capitalPrestado: formData.capitalPrestado,
+            total: total,
+            fechaPrestamo: formData.fechaPrestamo,
+            fechaPago: formData.fechaPago,
+            paymentMethod: formData.paymentMethod,
+            direccion: formData.direccion,
+            grupo: formData.grupo
+        };
 
-      const response = await fetch(
-        "https://payments-api-jpt5.onrender.com/api/v1/create-user",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(dataNew),
-        }
-      );
-      console.log(response);
-      modalForm = false;
-      
-      response.ok ? console.log("funciona") : console.log("no funciona lptm");
-    } catch (error) {
-      console.error(error);
+        const response = await fetch(
+            "https://payments-api-jpt5.onrender.com/api/v1/create-user",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(dataNew),
+            }
+        );
+        modalForm = false;
+        response.ok ? console.log("funciona") : console.log("no funciona lptm");
+        window.location.reload();
+      } catch (error) {
+        console.error(error);
     }
-  };
+};
 
   //Actualizar usuario
   const newData = (client) => {
@@ -110,7 +117,6 @@
         }
       );
       const clientActualizado = await patchUser.json();
-      console.log(clientActualizado);
       modalEditar = false;
       window.location.reload();
     } catch (error) {
@@ -782,7 +788,7 @@
             </svg>
           </div>
           <input
-            type="text"
+            type="date"
             id="fechaPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
@@ -790,44 +796,7 @@
             on:input={validateCount}
           />
         </div>
-
         <!--Fecha maxima de pago-->
-        <label
-          for="fechaMaximoPago"
-          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-          >Fecha maxima de pago</label
-        >
-        <div class="relative mb-5 mt-2">
-          <div
-            class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="icon icon-tabler icon-tabler-info-circle"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z"></path>
-              <circle cx="12" cy="12" r="9"></circle>
-              <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              <polyline points="11 12 12 12 12 16 13 16"></polyline>
-            </svg>
-          </div>
-          <input
-            type="text"
-            id="fechaMaximoPago"
-            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            bind:value={formData.fechaPago}
-            placeholder="00-00-0000"
-            on:input={validateCount}
-          />
-        </div>
 
         <!-- Modalidad de pago -->
         <label
@@ -1123,51 +1092,14 @@
             </div>
             <input
               bind:value={formData.fechaPrestamo}
-              type="text"
+              type="date"
               id="fechaPrestamo"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
               placeholder="00-00-0000"
               on:input={validateCount}
             />
           </div>
-
           <!--Fecha maxima de pago-->
-          <label
-            for="fechaMaximoPago"
-            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >Fecha maxima de pago</label
-          >
-          <div class="relative mb-5 mt-2">
-            <div
-              class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-info-circle"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z"></path>
-                <circle cx="12" cy="12" r="9"></circle>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                <polyline points="11 12 12 12 12 16 13 16"></polyline>
-              </svg>
-            </div>
-            <input
-              bind:value={formData.fechaPago}
-              type="text"
-              id="fechaMaximoPago"
-              class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="00-00-0000"
-              on:input={validateCount}
-            />
-          </div>
 
           <!--Nombre del banco-->
           <label
@@ -1316,9 +1248,7 @@
         </button>
 
         <div class="p-8 z-10">
-          <h2 class="text-2xl mb-4">
-            Información del Cliente: {client.username} {client.lastName}
-          </h2>
+          <h2 class="text-2xl mb-4">Información del Cliente: {client.username} {client.lastName}</h2>
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
           <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
