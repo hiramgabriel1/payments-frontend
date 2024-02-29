@@ -78,7 +78,6 @@
             direccion: formData.direccion,
             grupo: formData.grupo
         };
-
         const response = await fetch(
             "https://payments-api-jpt5.onrender.com/api/v1/create-user",
             {
@@ -94,6 +93,7 @@
         window.location.reload();
       } catch (error) {
         console.error(error);
+
     }
 };
 
