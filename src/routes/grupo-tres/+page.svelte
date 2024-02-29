@@ -22,12 +22,14 @@
     grupo: "",
     pagado: false,
     cancelado: false,
+    totalPagado: 0,
   };
   
   var fechaDePago;
   var total;
+
   function calcularTotal() {
-    const comision = formData.capitalPrestado * 0.15;
+    const comision = Math.round(formData.capitalPrestado * 0.15);
     return (total = formData.capitalPrestado + comision);
   }
 
@@ -37,6 +39,7 @@
     formData.fechaPago = fechaPrestamo.toLocaleDateString();
 };
 
+  let sumaTotalHistorialPagos = 0
   // todo: show all clients
   async function getClients() {
     try {
@@ -45,7 +48,9 @@
       let clientsSevenDays = data.data.filter((client) =>
       client.grupo === "tianguis");
       clients = clientsSevenDays;
-      sumarTotales(clients) 
+      sumarTotales(clients);
+      calculateTotalPayments(clients);
+      sumaTotalHistorialPagos = calcularSumaTotalPagos(clients)
       loading = false;
     } catch (error) {
       console.error("Error al obtener los clientes:", error);
@@ -55,6 +60,30 @@
   onMount(()=> {
     getClients();
   })
+
+function calculateTotalPayments(clients) {
+  clients.forEach((client) => {
+    let sumaTotalPagada = 0;
+      if (client.historialPagos) {
+        sumaTotalPagada = client.historialPagos.reduce((total, pago) => total + pago, 0);
+    }
+    client.sumaTotalPagada = sumaTotalPagada; // Añadir la suma total de pagos al objeto del cliente
+  });
+}
+
+function calcularSumaTotalPagos(clientes) {
+  let sumaTotalPagos = 0;
+  if (clientes && clientes.length > 0) {
+    clientes.forEach(cliente => {
+      if (cliente.historialPagos) {
+        sumaTotalPagos += cliente.historialPagos.reduce((total, pago) => total + pago, 0);
+      }
+    });
+  } else {
+    console.error("La lista de clientes es nula o está vacía.");
+  }
+  return sumaTotalPagos;
+}
 
   const validateCount = (e) => {
     const event = e.target.value;
@@ -112,9 +141,8 @@
   let sumarTotalClients = 0
   function sumarTotales(clients) {
     for(const client of clients) {
-      sumarTotalClients += Math.floor(client.total * 1.15) || 0
+      sumarTotalClients += client.total || 0
     }
-    console.log(sumarTotalClients)
   }
 
   //Función que elimina usuario
@@ -132,29 +160,17 @@
     modalDelete = false;
   }
 
-
-
-  //Actualizar usuario
-/*   const newData = (client) => {
-  idUser = client._id;
-  formData = {...client}
-  modalEditar = true;
-  }; */
-
   // todo: editar usuario
   let patchUser;
   let idUser;
   async function actualizarUser() {
     try {
-      if (formData.capitalPrestado > formData.total) {
+      if (formData.totalPagado > formData.total) {
         toast.error("Error");
-
         return;
-      } else {
-        formData.total =
-          formData.capitalPrestado -
-          showDataPaymentToEdit.reduce((acc, client) => acc + client.total, 0);
 
+      } else {
+        formData.total = formData.totalPagado - showDataPaymentToEdit.reduce((acc, client) => acc + client.total, 0);
         formData.total = Math.abs(formData.total);
 
         if (formData.total < 1 || formData.total == 0) {
@@ -162,8 +178,6 @@
           console.log((formData.pagado = true));
           // formData.pagado = true
         }
-
-        console.log(total);
         patchUser = await fetch(
           `https://payments-api-jpt5.onrender.com/api/v1/edit-user/${idUser}`,
           {
@@ -184,12 +198,11 @@
   }
 
   // todo: modificar pagos de usuario
-  const addPayments = (client) => {
+  const mostrarModalEditar = (client) => {
     idUser = client._id;
-    formData = {...client}
+    formData = {...client, totalPagado: 0};
     let clientArrayInfo = [client];
     showDataPaymentToEdit = clientArrayInfo;
-    console.log(showDataPaymentToEdit);
     modalEditar = true;
   };
 
@@ -224,6 +237,12 @@
     clienteDelete = clienteDeleteArray;
     modalDelete = true;
   };
+
+  let displayValue = 'Deudas Pendientes'; 
+  function changeDisplayValue() {
+  displayValue = displayValue === 'Deudas Pendientes' ? 'Dinero Pagado' : 'Deudas Pendientes';
+}
+
 </script>
 
 <Toaster />
@@ -237,17 +256,14 @@
         </h2>
         <!--Numeros de clientes-->
         {#if clients}
-          <span
-            class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-          >
+          <span class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
             {clients.length}
             {clients.length === 1 ? "cliente" : "clientes"}
           </span>
         {:else}
-          <span
-            class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-            >0 clientes</span
-          >
+          <span class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">  
+            0 clientes
+          </span>
         {/if}
       </div>
     </div>
@@ -264,35 +280,35 @@
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
     <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">      
-      <a href="/"  class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/"  class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Clientes
       </a>
       
-      <a href="/pagos-pendientes"  class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/pagos-pendientes" class="px-3 py-5 text-xs  font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos pendientes
       </a>     
       
-      <a href="/clientes-cancelados"  class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/clientes-cancelados" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Clientes cancelados
       </a>    
       
-      <a href="/historial-pagos"  class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/historial-pagos" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Historial de pagos
       </a>    
      
-      <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-uno" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Armandina
       </a>
    
-      <a href="/grupo-dos"  class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-dos" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         San Juana     
       </a>
 
-      <a href="/grupo-tres"  class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-tres" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Tianguis
       </a>
      
-      <a href='/pagos-cercanos' class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href='/pagos-cercanos' class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </a>
      
@@ -377,7 +393,7 @@
                 <th
                   scope="col"
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >Fecha prestamos <br> Fecha limite prestamo</th
+                  >Fecha inicio<br>Fecha limite</th
                 >
                 <!--Barra porcentae de pago-->
                 <th
@@ -385,8 +401,12 @@
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                   >Opciones</th
                 >
-                <th scope="col" class="relative py-3.5 px-4">
-                Suma total: {sumarTotalClients}
+                <th scope="col" class="relative py-3.5 px-4 cursor-pointer" on:click={changeDisplayValue}>
+                {#if displayValue === 'Deudas Pendientes'}
+                  Deudas Pendientes: {sumarTotalClients}
+                {:else}
+                  Dinero Pagado: {sumaTotalHistorialPagos}
+                {/if}
                 </th>
               </tr>
             </thead>
@@ -400,8 +420,7 @@
                   <td colspan="6" class="text-center">Cargando...</td>
                 </tr>
               {:else if searchResults.length > 0}
-                {#each searchResults as client}
-                  {#if client.paymentMethod !== "efectivo"}
+                {#each searchResults as client}           
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
@@ -421,12 +440,87 @@
                         <br />
                         {client.fechaPago}
                       </td>
+
+                      <td class="px-4 py-2">
+                        <!-- Boton de ver detalles del cliente -->
+                        <button
+                          on:click={() => mostrarModalDetail(client)}
+                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                        >
+                          <span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              class="w-4 h-4"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+
+                        <!--Eliminar user-->
+                        <button
+                          on:click={() => mostrarModalDelete(client)}
+                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                        >
+                          <span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              class="w-4 h-4"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                      </td>
+                      <td class="px-4 py-2">
+                        <!--EDITAR user-->
+                        <button
+                          on:click={() => mostrarModalEditar(client)}
+                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                        >
+                          <span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              class="w-4 h-4"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                      </td>
                     </tr>
-                  {/if}
                 {/each}
               {:else if clients.length > 0}
-                {#each clients as client}
-                  {#if client.paymentMethod !== "efectivo"}
+                {#each clients as client}         
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
@@ -502,7 +596,7 @@
                       <td class="px-4 py-2">
                         <!--EDITAR user-->
                         <button
-                          on:click={() => addPayments(client)}
+                          on:click={() => mostrarModalEditar(client)}
                           class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
                         >
                           <span>
@@ -524,7 +618,6 @@
                         </button>
                       </td>
                     </tr>
-                  {/if}
                 {/each}
               {:else}
                 <tr>
@@ -867,7 +960,8 @@
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
           <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
-          <p class="text-lg mb-2">Total: {client.total}</p>
+          <p class="text-lg mb-2">Total a pagar: {client.total == 0 ? 'Pagado' : client.total}</p>
+          <p class="text-lg mb-2">Cantidad pagado: {client.sumaTotalPagada}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
           <p class="text-lg mb-2">Modalidad de pago: {client.grupo}</p>
@@ -1033,7 +1127,7 @@
                 </svg>
               </div>
               <input
-                bind:value={formData.capitalPrestado}
+                bind:value={formData.totalPagado}
                 type="number"
                 id="montoPrestamo"
                 on:input={validateCounter}
@@ -1077,49 +1171,11 @@
                 min="0"
                 class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
                 placeholder={clientRender.total}
-                on:input={validateCounter}
               />
             </div>
 
             <!--Fecha de prestamo-->
-            <label
-              for="fechaPrestamo"
-              class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-              >Fecha del prestamo</label
-            >
-            <div class="relative mb-5 mt-2">
-              <div
-                class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="icon icon-tabler icon-tabler-calendar-event"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  stroke-width="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" />
-                  <rect x="4" y="5" width="16" height="16" rx="2" />
-                  <line x1="16" y1="3" x2="16" y2="7" />
-                  <line x1="8" y1="3" x2="8" y2="7" />
-                  <line x1="4" y1="11" x2="20" y2="11" />
-                  <rect x="8" y="15" width="2" height="2" />
-                </svg>
-              </div>
-              <input
-                type="date"
-                id="fechaPrestamo"
-                class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-                bind:value={formData.fechaPrestamo}
-                on:input={validateCount}
-                placeholder="00-00-0000"
-              />
-            </div>
+           
             <!--Fecha maxima de pago-->
           
             <!-- Modalidad de pago -->

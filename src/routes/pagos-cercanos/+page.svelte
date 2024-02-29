@@ -8,6 +8,7 @@
   let modalDelete;
   let loading = true;
   let dataClients = [];
+  let showDataPaymentToEdit = [];
 
   let formData = {
     username: "",
@@ -21,13 +22,14 @@
     grupo: "",
     pagado: false,
     cancelado: false,
+    totalPagado: 0,
   };
 
   var fechaDePago;
   var total;
 
   function calcularTotal() {
-    const comision = formData.capitalPrestado * 0.15;
+    const comision = Math.round(formData.capitalPrestado * 0.15);
     return (total = formData.capitalPrestado + comision);
   }
 
@@ -38,21 +40,50 @@
     formData.fechaPago = fechaPrestamo.toLocaleDateString();
 };
 
+  let sumaTotalHistorialPagos = 0
   async function getClients() {
     try {
       const clients = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
       const data = await clients.json();
-      console.log(data)
       dataClients = data.data
+      sumarTotales(dataClients)
+      calculateTotalPayments(dataClients)
+      sumaTotalHistorialPagos = calcularSumaTotalPagos(dataClients)
       loading = false;
-      console.log(dataClients);
     } catch (error) {
       console.log(error);
     }
   }
+
 onMount(()=> {
   getClients()
 })
+
+function calculateTotalPayments(clients) {
+  clients.forEach((client) => {
+    let sumaTotalPagada = 0;
+      if (client.historialPagos) {
+        sumaTotalPagada = client.historialPagos.reduce((total, pago) => total + pago, 0);
+      }
+    client.sumaTotalPagada = sumaTotalPagada; // Añadir la suma total de pagos al objeto del cliente
+  });
+}
+
+function calcularSumaTotalPagos(clientes) {
+  let sumaTotalPagos = 0;
+  if (clientes && clientes.length > 0) {
+    clientes.forEach(cliente => {
+      if (cliente.historialPagos) {
+        sumaTotalPagos += cliente.historialPagos.reduce((total, pago) => total + pago, 0);
+      }
+    });
+  } else {
+    console.error("La lista de clientes es nula o está vacía.");
+  }
+  return sumaTotalPagos;
+}
+
+
 /*   function compararPorFechaPago(clients) {
     return clients.slice().sort((clienteA, clienteB) => {
       const fechaPrestamoA = parseFecha(clienteA.fechaPrestamo);
@@ -115,41 +146,66 @@ onMount(()=> {
         );
         console.log(response);
         modalForm = false;
-        response.ok ? console.log("funciona") : console.log("no funciona lptm");
         window.location.reload();
+        response.ok ? console.log("funciona") : console.log("no funciona lptm");
       } catch (error) {
         console.error(error);
     }
 };
 
-  //Actualizar usuario
-  const newData = (client) => {
-  idUser = client._id;
-  formData = {...client}
-  modalEditar = true;
-  };
+
+  let sumarTotalClients = 0
+  function sumarTotales(clients) {
+    for(const client of clients) {
+      sumarTotalClients += client.total || 0
+    }
+  }
 
   //Función que Actualiza un cliente
   let patchUser;
   let idUser;
   async function actualizarUser() {
     try {
-      patchUser = await fetch(
-        `https://payments-api-jpt5.onrender.com/api/v1/edit-user/${idUser}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+        if (formData.totalPagado > formData.total) {
+            toast.error("Error");
+            return;
+
+        } else {
+            formData.total = formData.totalPagado - showDataPaymentToEdit.reduce((acc, client) => acc + client.total, 0);
+            formData.total = Math.abs(formData.total);
+            
+            if (formData.total < 1 || formData.total == 0) {
+                console.log("es 0");
+                console.log((formData.pagado = true));
+                // formData.pagado = true
+            }
+            patchUser = await fetch(
+                `https://payments-api-jpt5.onrender.com/api/v1/edit-user/${idUser}`,
+                {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData),
+                }
+            );
+            const clientActualizado = await patchUser.json();
+            console.log(clientActualizado);
+            toast.success("Usuario editado");
+            modalEditar = false;
+            window.location.reload();
         }
-      );
-      const clientActualizado = await patchUser.json();
-      console.log(clientActualizado);
-      modalEditar = false;
-      window.location.reload();
     } catch (error) {
-      console.log(error);
+        console.log(error);
     }
   }
+
+    //Actualizar usuario
+    const mostrarModalEditar = (client) => {
+    idUser = client._id;
+    formData = { ...client, totalPagado: 0}; // Establecer totalPagado en 0 al abrir el modal
+    let clientArrayInfo = [client];
+    showDataPaymentToEdit = clientArrayInfo;
+    modalEditar = true;
+  };
 
   //Función que elimina usuario
   export async function deleteClientsPendientes(idDelete) {
@@ -200,6 +256,11 @@ onMount(()=> {
     modalDelete = true;
   };
 
+  let displayValue = 'Deudas Pendientes'; 
+  function changeDisplayValue() {
+  displayValue = displayValue === 'Deudas Pendientes' ? 'Dinero Pagado' : 'Deudas Pendientes';
+}
+
 </script>
 
 <Toaster />
@@ -239,35 +300,35 @@ onMount(()=> {
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
     <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
-      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Clientes
       </a>
 
-      <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/pagos-pendientes" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos pendientes
       </a>
     
-      <a href="/clientes-cancelados" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/clientes-cancelados" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Clientes cancelados
       </a>    
 
-      <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/historial-pagos" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Historial de pagos
       </a>    
 
-      <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-uno" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Armandina
       </a>
 
-      <a href="/grupo-dos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-dos" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         San Juana
       </a>
    
-      <a href="/grupo-tres" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-tres" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Tianguis
       </a>
 
-      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <button class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </button>
     </div>
@@ -355,8 +416,12 @@ onMount(()=> {
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
                   >Opciones</th
                 >
-                <th scope="col" class="relative py-3.5 px-4">
-                  <span class="sr-only">Edit</span>
+                <th scope="col" class="relative py-3.5 px-4 cursor-pointer" on:click={changeDisplayValue}>
+                {#if displayValue === 'Deudas Pendientes'}
+                  Deudas Pendientes: {sumarTotalClients}
+                {:else}
+                  Dinero Pagado: {sumaTotalHistorialPagos}
+                {/if}
                 </th>
               </tr>
             </thead>
@@ -415,7 +480,7 @@ onMount(()=> {
                       >
                         <!--Editar usuario-->
                         <button
-                          on:click={() => newData(client)}
+                          on:click={() => mostrarModalEditar(client)}
                           class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-l-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
                         >
                           <span>
@@ -534,7 +599,7 @@ onMount(()=> {
                       >
                         <!--Editar usuario-->
                         <button
-                          on:click={() => newData(client)}
+                          on:click={() => mostrarModalEditar(client)}
                           class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-l-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
                         >
                           <span>
@@ -919,6 +984,8 @@ onMount(()=> {
 <!-- Modal Actualizar cliente -->
 {#if modalEditar}
   <!--Comienzo del modal-->
+  {#each showDataPaymentToEdit as clientRender}
+  <!--Comienzo del modal-->
   <form on:submit|preventDefault={actualizarUser}>
     <div
       class="py-12 transition duration-150 ease-in-out z-10 absolute top-0 right-0 bottom-0 left-0"
@@ -952,7 +1019,7 @@ onMount(()=> {
           <h1
             class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4"
           >
-            Editar un usuario
+            Añadir pago
           </h1>
           <!--Nombre-->
           <label
@@ -965,7 +1032,7 @@ onMount(()=> {
             on:input={validateCount}
             id="username"
             class="mb-5 mt-2 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-            placeholder="James"           
+            placeholder="james"
           />
 
           <!--Apellido-->
@@ -986,8 +1053,9 @@ onMount(()=> {
           <label
             for="montoPrestamo"
             class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >Capital prestado</label
           >
+            Pago semanal
+          </label>
           <div class="relative mb-5 mt-2">
             <div
               class="absolute text-gray-600 flex items-center px-4 border-r h-full"
@@ -1012,19 +1080,19 @@ onMount(()=> {
               </svg>
             </div>
             <input
-              bind:value={formData.capitalPrestado}
+              bind:value={formData.totalPagado}
               type="number"
               id="montoPrestamo"
+              on:input={validateCount}
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              placeholder="Monto prestamo"
-              on:input={calcularTotal}
+              placeholder="Monto"
             />
           </div>
 
           <label
             for="total"
             class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >Total</label
+            >Total Restante:</label
           >
           <div class="relative mb-5 mt-2">
             <div
@@ -1049,116 +1117,21 @@ onMount(()=> {
                 <line x1="11" y1="15" x2="13" y2="15" />
               </svg>
             </div>
-            {#if total !== undefined}
             <input
-             bind:value={total}
-             type="number"
-             id="montoPrestamo"
-             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-             placeholder="Monto total"
-             />
-           {:else}
-           <input
-             bind:value={formData.total}
-             type="number"
-             id="montoPrestamo"
-             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-             placeholder="Monto total"
-             />
-         {/if}
-          </div>
-
-          <!--Fecha de prestamo-->
-          <label
-            for="fechaPrestamo"
-            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >Fecha del prestamo</label
-          >
-          <div class="relative mb-5 mt-2">
-            <div
-              class="absolute right-0 text-gray-600 flex items-center pr-3 h-full cursor-pointer"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="icon icon-tabler icon-tabler-calendar-event"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                fill="none"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              >
-                <path stroke="none" d="M0 0h24v24H0z" />
-                <rect x="4" y="5" width="16" height="16" rx="2" />
-                <line x1="16" y1="3" x2="16" y2="7" />
-                <line x1="8" y1="3" x2="8" y2="7" />
-                <line x1="4" y1="11" x2="20" y2="11" />
-                <rect x="8" y="15" width="2" height="2" />
-              </svg>
-            </div>
-            <input
-              bind:value={formData.fechaPrestamo}
-              type="date"
-              id="fechaPrestamo"
-              class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-              placeholder="00-00-0000"
-              on:input={validateCount}
-            />
-          </div>
-          <!--Fecha maxima de pago-->
-          
-          <!--Nombre del banco-->
-          <label
-            for="nombreBanco"
-            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-            >Nombre del banco</label
-          >
-          <div class="relative mb-5 mt-2">
-            <div
-              class="absolute text-gray-600 flex items-center px-4 border-r h-full"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
-                />
-              </svg>
-            </div>
-            <input
-              bind:value={formData.paymentMethod}
-              type="text"
-              id="nombreBanco"
+              disabled
+              type="number"
+              id="montoPrestamo"
+              min="0"
               class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-              placeholder="BVBA"
-              on:input={validateCount}
+              placeholder={clientRender.total}
             />
           </div>
+          <!--Fecha de prestamo-->
+          
+          <!--Fecha maxima de pago-->
 
-          <label
-            for="direccion"
-            class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-          >
-            Dirección
-          </label>
-          <input
-            placeholder="Calle 7 y 8 Av.44"
-            bind:value={formData.direccion}
-            on:input={validateCount}
-            type="text"
-            class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-          />
-
-          <div class="">
+          <!--Nombre del banco-->
+          <div class="pagados">
             <label
               for="pagadoCheckbox"
               class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
@@ -1203,7 +1176,6 @@ onMount(()=> {
           <button
             on:click={() => (modalEditar = false)}
             class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600"
-            onclick="modalHandler()"
             aria-label="close modal"
             type="button"
           >
@@ -1228,6 +1200,7 @@ onMount(()=> {
       </div>
     </div>
   </form>
+{/each}
 {/if}
 
 <!-- Modal Detalles del cliente -->
@@ -1261,7 +1234,8 @@ onMount(()=> {
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
           <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
-          <p class="text-lg mb-2">Total: {client.total}</p>
+          <p class="text-lg mb-2">Total a pagar: {client.total == 0 ? 'Pagado' : client.total}</p>
+          <p class="text-lg mb-2">Cantidad pagado: {client.sumaTotalPagada}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
           <p class="text-lg mb-2">Modalidad de pago: {client.grupo}</p>

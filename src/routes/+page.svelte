@@ -27,7 +27,7 @@
   var fechaDePago;
   var total;
   function calcularTotal() {
-    const comision = formData.capitalPrestado * 0.15;
+    const comision = Math.round(formData.capitalPrestado * 0.15);
     return (total = formData.capitalPrestado + comision);
   }
 
@@ -116,7 +116,6 @@
           body: JSON.stringify(formData),
         }
       );
-      const clientActualizado = await patchUser.json();
       modalEditar = false;
       window.location.reload();
     } catch (error) {
@@ -184,17 +183,14 @@
       </h2>
       <!-- Número de clientes -->
       {#if dataClients}
-        <span
-          class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-        >
+        <span class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">
           {dataClients.length}
           {dataClients.length === 1 ? "cliente" : "clientes"}
         </span>
       {:else}
-        <span
-          class="px-3 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400"
-          >0 clientes</span
-        >
+        <span class="text-center w-24 py-1 text-xs text-blue-600 bg-blue-100 rounded-full dark:bg-gray-800 dark:text-blue-400">  
+          0 clientes
+        </span>
       {/if}
     </div>
 
@@ -211,54 +207,41 @@
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
     <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
-      <button class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300">
+      <button class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:bg-gray-800 dark:text-gray-300">
         Clientes
       </button>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/pagos-pendientes"
-      >
+      <a class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/pagos-pendientes">
         Pagos pendientes
       </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="clientes-cancelados">Clientes cancelados</a
-      >
+      <a class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+         href="clientes-cancelados">Clientes cancelados
+      </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/historial-pagos"
-      >
+      <a class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/historial-pagos">
         Historial de pagos
       </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/grupo-uno"
-      >
+      <a class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/grupo-uno">
         Armandina
       </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/grupo-dos"
-      >
+      <a class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/grupo-dos">
         San Juana
       </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/grupo-tres"
-      >
+      <a class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/grupo-tres">
         Tianguis
       </a>
 
-      <a
-        class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
-        href="/pagos-cercanos"
-      >
+      <a class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100"
+        href="/pagos-cercanos">
         Pagos cercanos
       </a>
     </div>
@@ -296,50 +279,28 @@
   <div class="flex flex-col mt-6">
     <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-        <div
-          class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg"
-        >
-          <table
-            class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
-          >
+        <div class="overflow-hidden border border-gray-200 dark:border-gray-700 md:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gray-50 dark:bg-gray-800">
               <tr>
-                <th
-                  scope="col"
-                  class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >
+                <th scope="col" class="py-3.5 px-4 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                   <button class="flex items-center gap-x-3 focus:outline-none">
                     <span>Id cliente</span>
-                    <svg
-                      class="h-3"
-                      viewBox="0 0 10 11"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <!-- SVG Path -->
-                    </svg>
+                    <svg class="h-3" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
                   </button>
                 </th>
-                <!--Name-->
-                <th
-                  scope="col"
-                  class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >
+                <!-- Nombre -->
+                <th scope="col" class="px-12 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                   Nombre
                 </th>
                 <!--Apellido-->
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                >
+                <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
                   Apellido
                 </th>
                 <!--Monto dinero prestado-->
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >Monto prestamo</th
-                >
+                <th scope="col" class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                  Monto prestamo
+                </th>
                 <!--Barra porcentae de pago-->
                 <th
                   scope="col"
@@ -1252,7 +1213,7 @@
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
           <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
-          <p class="text-lg mb-2">Total: {client.total}</p>
+          <p class="text-lg mb-2">Total: {client.total == 0 ? 'Pagado' : client.total}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
           <p class="text-lg mb-2">Modalidad de pago: {client.grupo}</p>

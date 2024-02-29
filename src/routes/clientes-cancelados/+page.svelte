@@ -27,7 +27,7 @@
   var total;
 
   function calcularTotal() {
-    const comision = formData.capitalPrestado * 0.15;
+    const comision = Math.round(formData.capitalPrestado * 0.15);
     return (total = formData.capitalPrestado + comision);
 }
 
@@ -38,7 +38,7 @@
 };
 
   //Función que filtra a los clientes que no pagaron
-  export async function clientesPendientes() {
+  export async function clientesCancelados() {
     try {
       const clients = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
       let data = await clients.json();
@@ -51,7 +51,7 @@
     }
   }
   onMount(() => {
-    return clientesPendientes();
+    return clientesCancelados();
   })
 
   const validateCount = (e) => {
@@ -217,35 +217,35 @@
   <div class="mt-6 md:flex md:items-center md:justify-between">
     <!--Grupos-->
     <div class="inline-flex overflow-hidden bg-white border divide-x rounded-lg dark:bg-gray-900 rtl:flex-row-reverse dark:border-gray-700 dark:divide-gray-700">
-      <a href="/" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Clientes
       </a>
 
-      <a href="/pagos-pendientes" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/pagos-pendientes" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos pendientes
       </a>
     
-      <a href="/clientes-cancelados" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/clientes-cancelados" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Clientes cancelados
       </a>    
 
-      <a href="/historial-pagos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/historial-pagos" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Historial de pagos
       </a>    
 
-      <a href="/grupo-uno" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-uno" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Armandina
       </a>
 
-      <a href="/grupo-dos" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-dos" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         San Juana
       </a>
    
-      <a href="/grupo-tres" class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href="/grupo-tres" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Tianguis
       </a>
 
-      <a href='/pagos-cercanos' class="px-5 py-2 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+      <a href='/pagos-cercanos' class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
         Pagos cercanos
       </a>
     </div>
@@ -1243,7 +1243,7 @@
           <h2 class="text-xl mb-2">Nombre: {client.username}</h2>
           <h2 class="text-xl mb-2">Apellido: {client.lastName}</h2>
           <p class="text-lg mb-2">Capital prestado: {client.capitalPrestado}</p>
-          <p class="text-lg mb-2">Total: {client.total}</p>
+          <p class="text-lg mb-2">Total: {client.total == 0 ? 'Pagado' : client.total}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
           <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
           <p class="text-lg mb-2">Modalidad de pago: {client.grupo}</p>
