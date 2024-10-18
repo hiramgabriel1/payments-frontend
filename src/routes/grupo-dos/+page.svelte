@@ -17,10 +17,10 @@
     capitalPrestado: "",
     total: total,
     fechaPrestamo: "",
-    fechaPago: fechaDePago,
+    fechaPago: "",
+    modalityPayment: "",
     paymentMethod: "",
     direccion: "",
-    grupo: "",
     pagado: false,
     cancelado: false,
     totalPagado: 0,
@@ -34,18 +34,19 @@
     return (total = formData.capitalPrestado + comision);
   }
 
-  const calcularFechaLimite = () => {
+  /* const calcularFechaLimite = () => {
     const fechaPrestamo = new Date(formData.fechaPrestamo);
     fechaPrestamo.setDate(fechaPrestamo.getDate() + (14 * 7));
     formData.fechaPago = fechaPrestamo.toLocaleDateString();
-};
+  }; */
+
   let sumaTotalHistorialPagos = 0;
   async function getClients() {
     try {
-      const response = await fetch("https://payments-api-jpt5.onrender.com/api/v1/");
+      const response = await fetch("https://prestamista-backend.onrender.com/api/all/users");
       const data = await response.json();
-      let clientsFourteenDays = data.data.filter((client) => client.grupo === "san juana");
-      clients = clientsFourteenDays;
+      let clientsFiltered = data.filter((client) => client.paymentMethod == "tarjeta");
+      clients = clientsFiltered;
       sumarTotales(clients)
       calculateTotalPayments(clients)
       sumaTotalHistorialPagos = calcularSumaTotalPagos(clients)
@@ -111,12 +112,10 @@
         fechaPago: formData.fechaPago,
         paymentMethod: formData.paymentMethod,
         direccion: formData.direccion,
-        grupo: formData.grupo
+        modalityPayment: formData.modalityPayment
       };
 
-      const response = await fetch(
-        "https://payments-api-jpt5.onrender.com/api/v1/create-user",
-        {
+      const response = await fetch("https://prestamista-backend.onrender.com/api/create/user",{
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -127,7 +126,7 @@
       console.log(response);
       modalForm = false;
       window.location.reload();
-      response.ok ? console.log("funciona") : console.log("no funciona lptm");
+      response.ok ? console.log("funciona") : console.log("no funciona");
     } catch (error) {
       console.error(error);
     }
@@ -144,9 +143,7 @@
 
   //Función que elimina usuario
   async function deleteClientsPendientes(idDelete) {
-    const response = await fetch(
-      `https://payments-api-jpt5.onrender.com/api/v1/delete-user/${idDelete}`,
-      {
+    const response = await fetch(`https://prestamista-backend.onrender.com/api/create/user/${idDelete}`,{
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       }
@@ -180,7 +177,7 @@
         }
 
         console.log(total);
-        patchUser = await fetch(`https://payments-api-jpt5.onrender.com/api/v1/edit-user/${idUser}`,
+        patchUser = await fetch(`https://prestamista-backend.onrender.com/api/update/user/${idUser}`,
           {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
@@ -200,7 +197,7 @@
 
   // todo: modificar pagos de usuario
   const mostrarModalEditar = (client) => {
-    idUser = client._id;
+    idUser = client.id;
     formData = {...client, totalPagado: 0}
     let clientArrayInfo = [client];
     showDataPaymentToEdit = clientArrayInfo;
@@ -299,21 +296,12 @@
       </a>
 
       <a href="grupo-uno" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Armandina
+        Efectivo
       </a>
 
-      <button class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        San Juana
+      <button class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 bg-gray-100 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
+        Tarjeta
       </button>
-
-      <a href="grupo-tres" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Tianguis
-      </a>
-  
-      <a href="/pagos-cercanos" class="px-3 py-5 text-xs font-medium text-gray-600 transition-colors duration-200 sm:text-sm dark:hover:bg-gray-800 dark:text-gray-300 hover:bg-gray-100">
-        Pagos cercanos
-      </a>
-
     </div>
 
     <!--Search-->
@@ -339,7 +327,7 @@
         on:input={handleInput}
         type="text"
         placeholder="Buscar cliente..."
-        class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-80 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
+        class="block w-full py-1.5 pr-5 text-gray-700 bg-white border border-gray-200 rounded-lg md:w-52 placeholder-gray-400/70 pl-11 rtl:pr-11 rtl:pl-5 dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
       />
     </div>
   </div>
@@ -390,14 +378,7 @@
                 <th
                   scope="col"
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >Monto prestamo</th
-                >
-                <th
-                  scope="col"
-                  class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
-                  >Fecha inicio <br>Fecha limite</th
-                >
-                <!--Barra porcentae de pago-->
+                  >Monto prestamo</th>
                 <th
                   scope="col"
                   class="px-4 py-3.5 text-sm font-normal text-left rtl:text-right text-gray-500 dark:text-gray-400"
@@ -426,7 +407,7 @@
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
-                        >{client._id}</td
+                        >{client.id}</td
                       >
                       <td class="px-12 py-8 text-gray-700 text-sm"
                         >{client.username}</td
@@ -437,121 +418,11 @@
                       <td class="px-4 py-8 text-gray-700 text-sm"
                         >{client.total}</td
                       >
-                      <td class="px-4 py-8 text-gray-700 text-sm">
-                        {client.fechaPrestamo}
-                        <br />
-                        {client.fechaPago}
-                      </td>
                       <td class="px-4 py-2">
-                        <!-- Boton de ver detalles del cliente -->
-                        <button
-                          on:click={() => mostrarModalDetail(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                        >
-                          <span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                              />
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-
-                        <!--Eliminar usser-->
-                        <button
-                          on:click={() => mostrarModalDelete(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                        >
-                          <span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-                      </td>
-
-                      <td class="px-4 py-2">
-                        <!-- Boton de ver detalles del cliente -->
-                        <button
-                          on:click={() => mostrarModalDetail(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                        >
-                          <span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
-                              />
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-
-                        <!--Eliminar user-->
-                        <button
-                          on:click={() => mostrarModalDelete(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                        >
-                          <span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-                      </td>
-                      <td class="px-4 py-2">
-                        <!--EDITAR user-->
+                        <!--Boton de Editar cliente-->
                         <button
                           on:click={() => mostrarModalEditar(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                          class="text-slate-800 hover:text-green-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-l-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
                         >
                           <span>
                             <svg
@@ -566,6 +437,33 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                                 d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                              />
+                            </svg>
+                          </span>
+                        </button>
+                        <!-- Boton de ver detalles del cliente -->
+                        <button
+                          on:click={() => mostrarModalDetail(client)}
+                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                        >
+                          <span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              class="w-4 h-4"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                              />
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                               />
                             </svg>
                           </span>
@@ -578,7 +476,7 @@
                     <tr>
                       <td
                         class="px-4 py-8 text-sm font-medium text-gray-800 dark:text-white"
-                        >{client._id}</td
+                        >{client.id}</td
                       >
                       <td class="px-12 py-8 text-gray-700 text-sm"
                         >{client.username}</td
@@ -589,16 +487,33 @@
                       <td class="px-4 py-8 text-gray-700 text-sm"
                         >{client.total}</td
                       >
-                      <td class="px-4 py-8 text-gray-700 text-sm">
-                        {client.fechaPrestamo}
-                        <br />
-                        {client.fechaPago}
-                      </td>
                       <td class="px-4 py-2">
+                        <!--Boton de Editar cliente-->
+                        <button
+                          on:click={() => mostrarModalEditar(client)}
+                          class="text-slate-800 hover:text-green-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-l-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                        >
+                          <span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke-width="1.5"
+                              stroke="currentColor"
+                              class="w-4 h-4"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
+                              />
+                            </svg>
+                          </span>
+                        </button>
                         <!-- Boton de ver detalles del cliente -->
                         <button
                           on:click={() => mostrarModalDetail(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 font-medium px-4 py-2 inline-flex space-x-1 items-center"
+                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
                         >
                           <span>
                             <svg
@@ -618,53 +533,6 @@
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-
-                        <!--Eliminar user-->
-                        <button
-                          on:click={() => mostrarModalDelete(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                        >
-                          <span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                              />
-                            </svg>
-                          </span>
-                        </button>
-                      </td>
-                      <td class="px-4 py-2">
-                        <!--EDITAR user-->
-                        <button
-                          on:click={() => mostrarModalEditar(client)}
-                          class="text-slate-800 hover:text-blue-600 text-sm bg-white hover:bg-slate-100 border border-slate-200 rounded-r-lg font-medium px-4 py-2 inline-flex space-x-1 items-center"
-                        >
-                          <span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke-width="1.5"
-                              stroke="currentColor"
-                              class="w-4 h-4"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"
                               />
                             </svg>
                           </span>
@@ -864,63 +732,41 @@
             id="fechaPrestamo"
             class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
             bind:value={formData.fechaPrestamo}
-            placeholder="00-00-0000"
+            placeholder="00/00/0000"
             on:input={validateCount}
           />
         </div>
         <!--Fecha maxima de pago-->
 
-        <!-- Modalidad de pago -->
+        <!-- Metodo de pago -->
         <label
           for="direccion"
           class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
         >
-          Modalidad de pago
+          Metodo de pago
         </label>
 
-        <select
-          bind:value={formData.grupo}
-          on:input={validateCount}
-          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-3 text-sm border-gray-300 rounded border"
-        >
-          <option class="text-base" value="armandina">Armandina</option>
-          <option class="text-base" value="san juana">San juana</option>
-          <option class="text-base" value="tianguis">Tianguis</option>
-        </select>
-
-        <!--Nombre del banco-->
-        <label
-          for="nombreBanco"
-          class="text-gray-800 text-sm font-bold leading-tight tracking-normal"
-          >Nombre del banco</label
-        >
         <div class="relative mb-5 mt-2">
-          <div
-            class="absolute text-gray-600 flex items-center px-4 border-r h-full"
-          >
+          <div class="absolute text-gray-600 flex items-center px-4 border-r h-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
               stroke-width="1.5"
               stroke="currentColor"
-              class="w-6 h-6"
-            >
+              class="w-6 h-6">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
-              />
+                d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"/>
             </svg>
           </div>
-          <input
-            type="text"
-            id="nombreBanco"
-            class="text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 flex items-center pl-16 text-sm border-gray-300 rounded border"
-            bind:value={formData.paymentMethod}
-            placeholder="BVBA"
-            on:input={validateCount}
-          />
+          <select
+          bind:value={formData.paymentMethod}
+          class="mb-8 text-gray-600 focus:outline-none focus:border focus:border-indigo-700 font-normal w-full h-10 pl-16 flex items-center text-sm border-gray-300 rounded border">
+          <option class="text-base" value="efectivo">Efectivo</option>
+          <option class="text-base" value="tarjeta">Tarjeta</option>
+          </select>
         </div>
 
         <label
@@ -1016,13 +862,11 @@
           <p class="text-lg mb-2">Total a pagar: {client.total == 0 ? 'Pagado' : client.total}</p>
           <p class="text-lg mb-2">Cantidad Pagado: {client.sumaTotalPagada}</p>
           <p class="text-lg mb-2">Fecha del prestamo: {client.fechaPrestamo}</p>
-          <p class="text-lg mb-2">Fecha limite de pago: {client.fechaPago}</p>
-          <p class="text-lg mb-2">Modalidad de pago: {client.grupo}</p>
           <p class="text-lg mb-2">Metodo de pago: {client.paymentMethod}</p>
           <p class="text-lg mb-2">Dirección: {client.direccion}</p>
           <p class="text-lg mb-2">Pagado: {client.pagado ? "Si" : "No"}</p>
           <p class="text-lg mb-2">Cancelado: {client.cancelado ? "Si" : "No"}</p>
-          <p class="text-lg mb-2">Id del cliente: {client._id}</p>
+          <p class="text-lg mb-2">Id del cliente: {client.id}</p>
         </div>
       </div>
     </div>
@@ -1047,7 +891,7 @@
         <div class="flex justify-between px-8 pb-8">
           <div>
             <button
-              on:click={() => deleteClientsPendientes(client._id)}
+              on:click={() => deleteClientsPendientes(client.id)}
               class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded"
               >Si</button
             >
